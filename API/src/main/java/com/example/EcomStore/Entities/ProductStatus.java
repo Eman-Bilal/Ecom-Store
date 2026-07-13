@@ -1,6 +1,6 @@
 package com.example.EcomStore.Entities;
 
 public enum ProductStatus {
-  ACTIVE,
-  INACTIVE
+  IN_STOCK,
+  OUT_OF_STOCK
 }

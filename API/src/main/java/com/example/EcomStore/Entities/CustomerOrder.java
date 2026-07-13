@@ -23,14 +23,15 @@ import java.time.LocalDateTime;
 public class CustomerOrder {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false) // user/admin manages customer order
-  private User user;
+//  @ManyToOne
+//  @JoinColumn(name = "user_id", nullable = false) // user/admin manages customer order
+//  private User user;
 
   @Column(nullable = false, unique = true)
+  @GeneratedValue(strategy = GenerationType.UUID)
   private String orderNumber;
 
   @NotBlank(message = "First name is required")
@@ -67,18 +68,19 @@ public class CustomerOrder {
   private OrderStatus orderStatus;
 
   @DecimalMin(value = "0.0")
-  @Column(nullable = false)
+  @Column(nullable = false,precision = 10, scale = 2)
   private BigDecimal subtotal;
 
   @DecimalMin(value = "0.0")
-  @Column(nullable = false)
+  @Column(nullable = false,precision = 10, scale = 2)
   private BigDecimal shippingFee;
 
   @DecimalMin(value = "0.0")
-  @Column(nullable = false)
+  @Column(nullable = false,precision = 10, scale = 2)
   private BigDecimal totalAmount;
 
   @Column(nullable = false)
+  @CreationTimestamp
   private LocalDateTime placedAt;
 
   @CreationTimestamp

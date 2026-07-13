@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class User {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   private Long id;
 
   @NotBlank(message = "Name is required")
@@ -38,7 +38,11 @@ public class User {
   private String email;
 
   @Column(nullable = false)
-  @NotBlank
+  @NotBlank(message = "Password is required")
+  @Pattern(
+      regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$",
+      message = "Password must be at least 6 characters and contain an uppercase letter, lowercase letter, number, and special character."
+  )
   private String password;
 
   @Column(nullable = false, unique = true)

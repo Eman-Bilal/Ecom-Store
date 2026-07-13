@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OrderItems {
   @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
   private Long id;
 
   @ManyToOne
@@ -31,9 +32,9 @@ public class OrderItems {
   @Column(nullable = false)
   private Integer quantity;
 
-  @Column(nullable = false)
+  @Column(nullable = false,precision = 10, scale = 2)
   private BigDecimal unitPrice;
 
-  @Column(nullable = false)
-  private BigDecimal lineTotal;
+  @Column(nullable = false,precision = 10, scale = 2)
+  private BigDecimal total;
 }
