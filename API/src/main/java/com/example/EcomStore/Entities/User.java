@@ -1,13 +1,17 @@
 package com.example.EcomStore.Entities;
 
-import com.sun.istack.NotNull;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,25 +22,35 @@ public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long Id;
+  private Long id;
 
+  @NotBlank(message = "Name is required")
   @Column(nullable = false)
   private String firstName;
 
+  @NotBlank(message = "Name is required")
   @Column(nullable = false)
   private String lastName;
 
   @Email
-  @NotBlank
+  @NotBlank(message = "Email is required")
+  @Column(nullable = false, unique = true)
   private String email;
 
   @Column(nullable = false)
+  @NotBlank
   private String password;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
+  @Pattern(regexp = "^03\\d{9}$", message = "Phone number must be exactly 10 digits")
   private String phone;
 
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private Role role;
 
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
 }
