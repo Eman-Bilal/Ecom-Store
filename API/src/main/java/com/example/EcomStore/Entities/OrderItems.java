@@ -16,7 +16,8 @@ import java.math.BigDecimal;
 public class OrderItems {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private Long id;
+  @Column(length = 36, updatable = false, nullable = false)
+  private String id;
 
   @ManyToOne
   @JoinColumn(name = "order_id", nullable = false)
@@ -36,5 +37,5 @@ public class OrderItems {
   private BigDecimal unitPrice;
 
   @Column(nullable = false,precision = 10, scale = 2)
-  private BigDecimal total;
+  private BigDecimal lineTotal;
 }

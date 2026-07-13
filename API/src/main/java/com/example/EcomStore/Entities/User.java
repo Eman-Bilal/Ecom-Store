@@ -22,7 +22,8 @@ public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private Long id;
+  @Column(length = 36, updatable = false, nullable = false)
+  private String id;
 
   @NotBlank(message = "Name is required")
   @Column(nullable = false)
@@ -32,7 +33,7 @@ public class User {
   @Column(nullable = false)
   private String lastName;
 
-  @Email
+  @Email(message = "Invalid Email")
   @NotBlank(message = "Email is required")
   @Column(nullable = false, unique = true)
   private String email;
@@ -46,7 +47,7 @@ public class User {
   private String password;
 
   @Column(nullable = false, unique = true)
-  @Pattern(regexp = "^03\\d{9}$", message = "Phone number must be exactly 10 digits")
+  @Pattern(regexp = "^03\\d{9}$", message = "Phone number must be exactly 11 digits")
   private String phone;
 
   @Column(nullable = false)
