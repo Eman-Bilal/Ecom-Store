@@ -23,7 +23,8 @@ public class Product {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private Long id;
+  @Column(length = 36, updatable = false, nullable = false)
+  private String id;
 
   @ManyToOne
   @JoinColumn(name = "category_id", nullable = false)
@@ -36,7 +37,7 @@ public class Product {
   private String description;
 
   @DecimalMin(value = "0.0", inclusive = false)
-  @Column(nullable = false)
+  @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal price;
 
   @Min(value = 0)

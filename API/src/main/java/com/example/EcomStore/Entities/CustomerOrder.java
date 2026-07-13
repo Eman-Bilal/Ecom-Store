@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,14 +25,15 @@ public class CustomerOrder {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private Long id;
+  @Column(length = 36, updatable = false, nullable = false)
+  private String id;
 
 //  @ManyToOne
 //  @JoinColumn(name = "user_id", nullable = false) // user/admin manages customer order
 //  private User user;
 
   @Column(nullable = false, unique = true)
-  @GeneratedValue(strategy = GenerationType.UUID)
+//  @GeneratedValue(strategy = GenerationType.UUID)
   private String orderNumber;
 
   @NotBlank(message = "First name is required")
@@ -48,7 +50,8 @@ public class CustomerOrder {
   private String email;
 
   @NotBlank(message = "Phone number is required")
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
+  @Pattern(regexp = "^03\\d{9}$", message = "Phone number must be exactly 11 digits")
   private String phone;
 
   @NotBlank(message = "Shipping address is required")
