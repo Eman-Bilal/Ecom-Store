@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 
 public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, String> {
-  long countByPlacedAtBetween(LocalDateTime start, LocalDateTime end);
+  long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
 }
