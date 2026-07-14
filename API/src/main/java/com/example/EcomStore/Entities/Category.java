@@ -27,7 +27,7 @@ public class Category {
 
   private String description;
 
-  @Column(nullable = false)
+//    @Column(nullable = false, comment = "active is missing from request body")
   private boolean active = true;
 
   @CreationTimestamp
