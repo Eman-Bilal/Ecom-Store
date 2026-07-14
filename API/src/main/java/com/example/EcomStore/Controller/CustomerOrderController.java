@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("orders/")
 public class CustomerOrderController {
 
   private final CustomerOrderService customerOrderService;
@@ -20,7 +20,7 @@ public class CustomerOrderController {
     this.customerOrderService = customerOrderService;
   }
 
-  @PostMapping
+  @PostMapping("create")
   public ResponseEntity<CustomerOrder> createOrder(
       @Valid @RequestBody CustomerOrder order) {
 
