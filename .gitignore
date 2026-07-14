@@ -24,7 +24,8 @@ target/
 .env
 .env.local
 .env.*.local
-application-secret.properties
+application.properties
+
 
 # =========================
 # IDE & OS FILES
