@@ -29,17 +29,15 @@ public class CustomerOrderService {
     LocalDateTime endOfDay = today.plusDays(1).atStartOfDay();
 
     long orderCount = customerOrderRepository
-        .countByPlacedAtBetween(startOfDay, endOfDay);
+        .countByCreatedAtBetween(startOfDay, endOfDay);
 
     String date = today.format(DateTimeFormatter.BASIC_ISO_DATE);
-
     return String.format("ORD-%s-%04d", date, orderCount + 1);
   }
 
   public CustomerOrder createOrder(CustomerOrder order) {
 
     order.setOrderNumber(generateOrderNumber());
-
     return customerOrderRepository.save(order);
   }
 }
