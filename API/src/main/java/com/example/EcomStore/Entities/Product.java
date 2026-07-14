@@ -27,7 +27,7 @@ public class Product {
   private String id;
 
   @ManyToOne
-  @JoinColumn(name = "category_id", nullable = false)
+  @JoinColumn(name = "category_id")
   private Category category;
 
   @NotBlank(message = "Product name is required")
@@ -36,7 +36,7 @@ public class Product {
 
   private String description;
 
-  @Column(nullable = false)
+//  @Column(nullable = false, comment = "active is missing from request body")
   private boolean active = true;
 
   @DecimalMin(value = "0.0", inclusive = false)
@@ -48,7 +48,6 @@ public class Product {
   private int quantityInStock;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
   private ProductStatus status;
 
   @CreationTimestamp
