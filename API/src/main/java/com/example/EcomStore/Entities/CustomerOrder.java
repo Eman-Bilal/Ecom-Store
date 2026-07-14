@@ -28,12 +28,7 @@ public class CustomerOrder {
   @Column(length = 36, updatable = false, nullable = false)
   private String id;
 
-//  @ManyToOne
-//  @JoinColumn(name = "user_id", nullable = false) // user/admin manages customer order
-//  private User user;
-
   @Column(nullable = false, unique = true)
-//  @GeneratedValue(strategy = GenerationType.UUID)
   private String orderNumber;
 
   @NotBlank(message = "First name is required")
@@ -50,7 +45,7 @@ public class CustomerOrder {
   private String email;
 
   @NotBlank(message = "Phone number is required")
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   @Pattern(regexp = "^03\\d{9}$", message = "Phone number must be exactly 11 digits")
   private String phone;
 
@@ -62,8 +57,7 @@ public class CustomerOrder {
   @Column(nullable = false)
   private String city;
 
-//  @NotBlank(message = "Postal code is required")
-//  @Column(nullable = false)
+//  optional
   private String postalCode;
 
   @Enumerated(EnumType.STRING)
@@ -83,9 +77,6 @@ public class CustomerOrder {
   private BigDecimal totalAmount;
 
   @Column(nullable = false)
-  @CreationTimestamp
-  private LocalDateTime placedAt;
-
   @CreationTimestamp
   private LocalDateTime createdAt;
 

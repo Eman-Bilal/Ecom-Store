@@ -36,6 +36,9 @@ public class Product {
 
   private String description;
 
+  @Column(nullable = false)
+  private boolean active = true;
+
   @DecimalMin(value = "0.0", inclusive = false)
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal price;

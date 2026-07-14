@@ -1,10 +1,8 @@
 package com.example.EcomStore.Entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.DecimalMin;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -13,6 +11,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class OrderItems {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,6 +33,7 @@ public class OrderItems {
   private Integer quantity;
 
   @Column(nullable = false,precision = 10, scale = 2)
+  @DecimalMin("0.0")
   private BigDecimal unitPrice;
 
   @Column(nullable = false,precision = 10, scale = 2)
