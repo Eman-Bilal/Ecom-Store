@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Table(name = "app_users")
+public class Admin {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

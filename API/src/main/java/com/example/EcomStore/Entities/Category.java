@@ -24,10 +24,15 @@ public class Category {
   @NotBlank(message = "Category is required")
   @Column(nullable = false, unique = true)
   private String categoryName;
+
   private String description;
+
+  @Column(nullable = false)
+  private boolean active = true;
 
   @CreationTimestamp
   private LocalDateTime createdAt;
+
   @UpdateTimestamp
   private LocalDateTime updatedAt;
 
