@@ -1,7 +1,7 @@
 package com.example.EcomStore.Service;
 
-import com.example.EcomStore.Entities.User;
-import com.example.EcomStore.Repository.UserRepository;
+import com.example.EcomStore.Entities.Admin;
+import com.example.EcomStore.Repository.AdminRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserService {
-  UserRepository user;
+public class AdminService {
+  AdminRepository user;
 
-  public List<User> getUser() {
+  public List<Admin> getUser() {
     return user.findAll();
   }
 
