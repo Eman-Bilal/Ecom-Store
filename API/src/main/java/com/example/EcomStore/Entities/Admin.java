@@ -47,7 +47,7 @@ public class Admin {
   )
   private String password;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   @Pattern(regexp = "^03\\d{9}$", message = "Phone number must be exactly 11 digits")
   private String phone;
 
