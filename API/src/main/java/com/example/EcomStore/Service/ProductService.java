@@ -9,6 +9,7 @@ import com.example.EcomStore.Repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -59,7 +60,7 @@ public class ProductService {
     return productRepository.save(existing);
   }
 
-  private void syncStatus(Product product) {
+  void syncStatus(Product product) {
     if (product.getQuantityInStock() <= 0) {
       product.setStatus(ProductStatus.OUT_OF_STOCK);
     } else {
@@ -78,5 +79,16 @@ public class ProductService {
         .orElseThrow(() -> new ResourceNotFoundException("Inactive product not found with id: " + id));
     product.setActive(true);
     return productRepository.save(product);
+  }
+
+  public List<Product> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Long categoryId) {
+    List<Product> products = productRepository.findByActiveTrue();
+
+    return products.stream()
+        .filter(p -> name == null || p.getName().toLowerCase().contains(name.toLowerCase()))
+        .filter(p -> minPrice == null || p.getPrice().compareTo(minPrice) >= 0)
+        .filter(p -> maxPrice == null || p.getPrice().compareTo(maxPrice) <= 0)
+        .filter(p -> categoryId == null || p.getCategory().getId().equals(categoryId))
+        .toList();
   }
 }

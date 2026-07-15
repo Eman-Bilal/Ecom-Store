@@ -16,6 +16,7 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final ProductRepository productRepository;
+
   public Category createCategory(Category category) {
     return categoryRepository.save(category);
   }
@@ -29,32 +30,33 @@ public class CategoryService {
         .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
   }
 
-  public void updateCategory(Long id, Category updatedCategory) {
+  public Category updateCategory(Long id, Category updatedCategory) {
     Category existing = getById(id);
     existing.setCategoryName(updatedCategory.getCategoryName());
     existing.setDescription(updatedCategory.getDescription());
-    categoryRepository.save(existing);
+    return categoryRepository.save(existing);
   }
-    public void deleteCategory(Long id) {
-      Category category = getById(id);
-      category.setActive(false);
-      categoryRepository.save(category);
 
-      List<Product> products = productRepository.findByCategoryId(id);
-      products.forEach(p -> p.setActive(false));
-      productRepository.saveAll(products);
-    }
+  public void deleteCategory(Long id) {
+    Category category = getById(id);
+    category.setActive(false);
+    categoryRepository.save(category);
 
-    public Category reactivateCategory(Long id) {
-      Category category = categoryRepository.findByIdAndActiveFalse(id)
-          .orElseThrow(() -> new ResourceNotFoundException("Inactive category not found with id: " + id));
-      category.setActive(true);
-      categoryRepository.save(category);
-
-      List<Product> products = productRepository.findByCategoryId(id);
-      products.forEach(p -> p.setActive(true));
-      productRepository.saveAll(products);
-
-      return category;
-    }
+    List<Product> products = productRepository.findByCategoryId(id);
+    products.forEach(p -> p.setActive(false));
+    productRepository.saveAll(products);
   }
+
+  public Category reactivateCategory(Long id) {
+    Category category = categoryRepository.findByIdAndActiveFalse(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Inactive category not found with id: " + id));
+    category.setActive(true);
+    categoryRepository.save(category);
+
+    List<Product> products = productRepository.findByCategoryId(id);
+    products.forEach(p -> p.setActive(true));
+    productRepository.saveAll(products);
+
+    return category;
+  }
+}
