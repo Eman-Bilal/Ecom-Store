@@ -1,17 +1,15 @@
 package com.example.EcomStore.Controller;
 
+import com.example.EcomStore.Dto.CreateOrderRequest;
 import com.example.EcomStore.Entities.CustomerOrder;
 import com.example.EcomStore.Service.CustomerOrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("orders/")
+@RequestMapping("orders")
 public class CustomerOrderController {
 
   private final CustomerOrderService customerOrderService;
@@ -20,12 +18,14 @@ public class CustomerOrderController {
     this.customerOrderService = customerOrderService;
   }
 
-  @PostMapping("create")
-  public ResponseEntity<CustomerOrder> createOrder(
-      @Valid @RequestBody CustomerOrder order) {
-
-    CustomerOrder savedOrder = customerOrderService.createOrder(order);
-
+  @PostMapping("/checkout")
+  public ResponseEntity<CustomerOrder> checkout(@Valid @RequestBody CreateOrderRequest request) {
+    CustomerOrder savedOrder = customerOrderService.createOrder(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<CustomerOrder> getById(@PathVariable String id) {
+    return ResponseEntity.ok(customerOrderService.getById(id));
   }
 }
