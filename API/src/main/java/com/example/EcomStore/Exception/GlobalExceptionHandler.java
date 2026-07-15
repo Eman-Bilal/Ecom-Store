@@ -19,6 +19,11 @@ public class GlobalExceptionHandler {
     return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
   }
 
+  @ExceptionHandler(InsufficientStockException.class)
+  public ResponseEntity<Map<String, Object>> handleInsufficientStock(InsufficientStockException ex) {
+    return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+  }
+
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
