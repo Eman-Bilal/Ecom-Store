@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -55,4 +56,14 @@ public class ProductController {
   public ResponseEntity<Product> reactivate(@PathVariable String id) {
     return ResponseEntity.ok(productService.reactivateProduct(id));
   }
+
+  @GetMapping("/search")
+  public ResponseEntity<List<Product>> search(
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) BigDecimal minPrice,
+      @RequestParam(required = false) BigDecimal maxPrice,
+      @RequestParam(required = false) Long categoryId) {
+    return ResponseEntity.ok(productService.searchProducts(name, minPrice, maxPrice, categoryId));
+  }
+
 }
