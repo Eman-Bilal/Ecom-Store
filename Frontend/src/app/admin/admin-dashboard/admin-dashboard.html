@@ -1,0 +1,58 @@
+<div class="admin-page-head">
+  <h1>Dashboard</h1>
+  <p class="sub">Here's what's happening in your store today.</p>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="label">Revenue this month</div>
+    <div class="value">Rs. {{ revenue | number }}</div>
+    <div class="trend up">↑ 8.2% vs last month</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Orders this week</div>
+    <div class="value">{{ ordersThisWeek }}</div>
+    <div class="trend up">↑ 5 new today</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Low stock items</div>
+    <div class="value">{{ lowStockCount }}</div>
+    <div class="trend warn">Needs restock</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Total products</div>
+    <div class="value">{{ totalProducts }}</div>
+    <div class="trend">Across 5 categories</div>
+  </div>
+</div>
+
+<div class="dash-grid">
+  <div class="panel">
+    <h3>Top products</h3>
+    <p class="sub">By units sold this month</p>
+    @for (item of topProducts; track item.name) {
+      <div class="bar-row">
+        <div class="bar-top"><span>{{ item.name }}</span><span>{{ item.units }} sold</span></div>
+        <div class="bar-track"><div class="bar-fill" [style.width.%]="item.percent"></div></div>
+      </div>
+    }
+  </div>
+
+  <div class="panel">
+    <h3>Recent orders</h3>
+    <p class="sub">Latest activity across the store</p>
+    <table class="mini-table">
+      <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
+      <tbody>
+        @for (order of recentOrders; track order.id) {
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.customer }}</td>
+            <td>Rs. {{ order.total | number }}</td>
+            <td><span class="badge" [class]="order.status">{{ order.status }}</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

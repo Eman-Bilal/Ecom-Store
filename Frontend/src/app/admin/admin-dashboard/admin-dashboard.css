@@ -1,0 +1,137 @@
+.admin-page-head {
+  margin-bottom: 28px;
+}
+
+.admin-page-head h1 {
+  font-size: 28px;
+}
+
+.admin-page-head .sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 20px 22px;
+}
+
+.kpi-card .label {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.kpi-card .value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.kpi-card .trend {
+  font-size: 11px;
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.trend.up { color: #2F6B4A; }
+.trend.warn { color: var(--brass); }
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 16px;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 24px;
+}
+
+.panel h3 {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.panel .sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.bar-row {
+  margin-bottom: 16px;
+}
+
+.bar-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.bar-track {
+  height: 7px;
+  background: var(--paper-2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--moss);
+  border-radius: 4px;
+}
+
+.mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.mini-table th {
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mini-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge.delivered { background: rgba(47,75,60,0.12); color: var(--moss); }
+.badge.shipped { background: rgba(169,129,47,0.15); color: var(--brass); }
+.badge.pending { background: rgba(179,67,45,0.1); color: #B3432D; }
+
+@media (max-width: 900px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .dash-grid { grid-template-columns: 1fr; }
+}

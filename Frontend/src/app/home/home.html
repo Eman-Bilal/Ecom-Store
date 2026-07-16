@@ -1,0 +1,39 @@
+<section class="hero">
+  <div>
+    <div class="eyebrow">The Horizon collection</div>
+    <h1>Select Your New<br />Perfect Timepiece</h1>
+    <p>Made for those who appreciate timeless elegance, precision, and lasting quality.</p>
+    <button class="btn-brass" [routerLink]="['/shop']">Shop Now</button>
+  </div>
+  <div class="hero-panel">
+  <img src="/watch1.jpeg" alt="Meridian Classic Automatic watch" class="hero-img" />
+</div>
+</section>
+
+<div class="product-row">
+  <div class="section-head">
+    <h2>New Arrivals</h2>
+    <a class="btn-outline-dark" [routerLink]="['/shop']">View all</a>
+  </div>
+   <div class="product-grid">
+    @for (product of newArrivals; track product.id) {
+      <div class="product-card">
+        <a [routerLink]="['/product', product.id]">
+          <div class="product-photo">
+            <img [src]="product.imageUrl" [alt]="product.name" class="product-img" />
+          </div>
+        </a>
+        <div class="cat">{{ product.category }}</div>
+        <div class="name">{{ product.name }}</div>
+        <div class="price">{{ product.price }}</div>
+      </div>
+    }
+  </div>
+ 
+</div>
+
+<div class="feature-strip">
+  <div class="feature-card"><div class="mark"></div><h4>Free Shipping</h4><p>On every order over Rs. 10,000, no code needed.</p></div>
+  <div class="feature-card"><div class="mark"></div><h4>2-Year Warranty</h4><p>Every movement is covered against defects.</p></div>
+  <div class="feature-card"><div class="mark"></div><h4>Secure Payment</h4><p>Checkout is encrypted end to end.</p></div>
+</div>
