@@ -1,0 +1,13 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">DialEra<span class="tag">Admin</span></div>
+    <nav class="admin-nav">
+      <a [routerLink]="['/admin/dashboard']" routerLinkActive="active">Dashboard</a>
+      <a [routerLink]="['/admin/products']" routerLinkActive="active">Products</a>
+    </nav>
+    <button class="exit-admin-btn" (click)="exitAdmin()">← Exit to storefront</button>
+  </aside>
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,20 @@
+
+
+<div class="shop-toolbar">
+  <div class="tabs"><a class="active">Newest Arrivals</a><a>Price high to low</a><a>Most popular</a></div>
+  <div class="per-page">{{ products.length }} results</div>
+</div>
+
+<div class="shop-grid">
+  @for (product of products; track product.id) {
+    <div class="product-card">
+      <a [routerLink]="['/product', product.id]"><div class="product-photo"></div></a>
+      <div class="cat">{{ product.category }}</div>
+      <div class="name">{{ product.name }}</div>
+      <div class="price">{{ product.price }}</div>
+      <div class="add-line"><a [routerLink]="['/product', product.id]">View details</a></div>
+    </div>
+  }
+</div>
+
+<div class="pagination"><a class="active">1</a><a>2</a><a>3</a><a>→</a></div>

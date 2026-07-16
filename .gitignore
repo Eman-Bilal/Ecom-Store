@@ -36,3 +36,48 @@ application.properties
 *.sublime-workspace
 .DS_Store
 Thumbs.db
+
+
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+out/
+
+# Angular cache
+.angular/
+
+# Tool caches
+.cache/
+.parcel-cache/
+.vite/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Test coverage
+coverage/
+test-results/
+
+# OS & editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Misc
+.sass-cache/
+tmp/
+temp/
+node_repl_history

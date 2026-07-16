@@ -1,0 +1,82 @@
+.cart-table { 
+    width: calc(100% - 80px); 
+    border-collapse: collapse; 
+    margin: 30px 40px 0; 
+}
+.cart-table thead th { 
+    text-align: left; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.08em; 
+    color: var(--muted); 
+    padding: 16px 10px; 
+    border-bottom: 2px solid var(--moss); 
+}
+.cart-table td { 
+    padding: 20px 10px; 
+    border-bottom: 1px solid var(--line); 
+    vertical-align: middle; 
+}
+.cart-prod { 
+    display: flex; 
+    align-items: center; 
+    gap: 16px; 
+}
+.cart-prod .thumb { 
+    width: 64px; 
+    height: 64px; 
+    background: var(--sage); 
+    flex-shrink: 0; 
+}
+.cart-prod .name { 
+    font-family: 'Cormorant Garamond', serif; 
+    font-size: 17px; 
+    font-weight: 600; 
+}
+.cart-prod .remove { 
+    font-size: 11px; 
+    color: var(--muted); 
+    text-decoration: underline; 
+    cursor: pointer; 
+    margin-top: 4px; 
+}
+
+.cart-actions { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 24px 40px; 
+}
+.cart-lower {
+  display: flex;
+  justify-content: center;
+  padding: 10px 40px 46px;
+}
+
+.cart-totals {
+  background: var(--sage);
+  padding: 26px 28px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.cart-totals .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.cart-totals .row.total {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--moss);
+  border-bottom: none;
+  padding-top: 16px;
+}
+
+.btn-full {
+  width: 100%;
+  text-align: center;
+  margin-top: 16px;
+}

@@ -1,0 +1,65 @@
+
+.contact-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1.2fr; 
+    gap: 40px; 
+    padding: 54px 40px 60px; 
+}
+
+.contact-info h3 { 
+    font-size: 26px; 
+    margin-bottom: 14px; 
+}
+.contact-info p { 
+    font-size: 14px; 
+    color: #5B564C; 
+    line-height: 1.7; 
+    max-width: 360px; 
+    margin-bottom: 26px; 
+}
+.info-line { 
+    display: flex; 
+    gap: 14px; 
+    font-size: 13px; 
+    padding: 10px 0; 
+    border-bottom: 1px dashed var(--line); 
+    max-width: 360px; 
+}
+.info-line .label { 
+    color: var(--muted); 
+    text-transform: uppercase; 
+    letter-spacing: 0.06em; 
+    font-size: 11px; 
+    width: 60px; 
+    flex-shrink: 0; 
+}
+
+.contact-form { 
+    background: var(--sage); 
+    padding: 30px 28px; 
+}
+.textarea { 
+    resize: vertical; 
+    font-family: inherit; 
+}
+.btn-full { 
+    width: 100%; 
+    text-align: center; 
+    margin-top: 6px; 
+}
+
+.success-box { 
+    background: var(--paper); 
+    border: 1px solid var(--moss); 
+    padding: 16px 18px; 
+    margin-bottom: 20px; 
+}
+.success-box h4 { 
+    font-size: 15px; 
+    color: var(--moss); 
+    margin-bottom: 4px; 
+}
+.success-box p { 
+    font-size: 13px; 
+    color: #5B564C; 
+}

@@ -1,0 +1,27 @@
+<div class="admin-page-head">
+  <h1>Products</h1>
+  <p class="sub">{{ products.length }} products in your catalog</p>
+</div>
+
+<div class="admin-toolbar">
+  <input class="field search-field" placeholder="Search products..." />
+  <button class="btn-brass">+ Add product</button>
+</div>
+
+<div class="table-card">
+  <table class="admin-table">
+    <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      @for (product of products; track product.id) {
+        <tr>
+          <td class="name">{{ product.name }}</td>
+          <td>{{ product.category }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.stock }}</td>
+          <td><span class="badge" [class]="stockClass(product.stock)">{{ stockLabel(product.stock) }}</span></td>
+          <td class="row-actions"><a>Edit</a><a (click)="deleteProduct(product.id)">Delete</a></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

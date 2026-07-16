@@ -1,0 +1,30 @@
+
+<div class="contact-grid">
+  <div class="contact-info">
+    <h3>Get in touch</h3>
+    <p>Questions about a watch, an order, or a warranty claim — send us a message and we'll get back to you within one business day.</p>
+    <div class="info-line"><span class="label">Email</span><span>support&#64;dialera.com</span></div>
+    <div class="info-line"><span class="label">Phone</span><span>+92 300 1234567</span></div>
+    <div class="info-line"><span class="label">Hours</span><span>Mon–Sat, 10am–7pm</span></div>
+  </div>
+
+  <div class="contact-form">
+    @if (submitted) {
+      <div class="success-box">
+        <h4>Message sent</h4>
+        <p>Thanks for reaching out — we'll reply to your email shortly.</p>
+      </div>
+    }
+
+    <label class="field-label">Full name</label>
+    <input class="field" [(ngModel)]="name" placeholder="Your name" />
+
+    <label class="field-label">Email</label>
+    <input class="field" type="email" [(ngModel)]="email" placeholder="you@example.com" />
+
+    <label class="field-label">Message</label>
+    <textarea class="field textarea" [(ngModel)]="message" rows="5" placeholder="How can we help?"></textarea>
+
+    <button class="btn-brass btn-full" (click)="onSubmit()">Send message</button>
+  </div>
+</div>
