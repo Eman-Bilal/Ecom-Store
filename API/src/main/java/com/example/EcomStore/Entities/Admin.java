@@ -41,10 +41,10 @@ public class Admin {
 
   @Column(nullable = false)
   @NotBlank(message = "Password is required")
-  @Pattern(
-      regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$",
-      message = "Password must be at least 6 characters and contain an uppercase letter, lowercase letter, number, and special character."
-  )
+//  @Pattern(
+//      regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$",
+//      message = "Password must be at least 6 characters and contain an uppercase letter, lowercase letter, number, and special character."
+//  )
   private String password;
 
   @Column(nullable = false)
