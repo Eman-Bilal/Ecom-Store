@@ -1,0 +1,53 @@
+<nav class="nav">
+  <a [routerLink]="['/']" class="wordmark">
+    DialEra
+  </a>
+
+  @if (router.url !== '/') {
+    <button class="back-home-btn" (click)="goHome()">← Back to Home</button>
+  }
+
+  <div class="nav-links">
+    <a [routerLink]="['/']" routerLinkActive="current" [routerLinkActiveOptions]="{exact: true}">Home</a>
+    <a [routerLink]="['/about']" routerLinkActive="current">About</a>
+    <a [routerLink]="['/shop']" routerLinkActive="current">Shop</a>
+    <a [routerLink]="['/contact']" routerLinkActive="current">Contact</a>
+  </div>
+
+  <div class="nav-icons">
+    <a [routerLink]="['/cart']">Cart <span class="cart-badge">{{ cartCount }}</span></a>
+
+    <div class="mode-switch">
+      <button class="mode-btn" (click)="openAdminLogin()">🔐 Admin</button>
+
+      @if (showAdminPrompt) {
+        <div class="admin-popover">
+          <label class="field-label">Admin email</label>
+          <input class="field" [(ngModel)]="adminEmail" placeholder="Enter your email" />
+          <label class="field-label">Admin password</label>
+          <input class="field" type="password" [(ngModel)]="adminPassword" placeholder="••••••••" />
+          <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()">Enter admin panel</button>
+          @if (adminError) {
+            <p class="admin-error">{{ adminError }}</p>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
+
+<div class="footer">
+  <div class="footer-row">
+    <div class="wordmark">DialEra</div>
+    <div class="footer-links-inline">
+      <a [routerLink]="['/shop']">Shop</a>
+      <a [routerLink]="['/cart']">Cart</a>
+      <a>Warranty</a>
+      <a>Privacy</a>
+    </div>
+    <div class="social-icons"><span><a href="https://www.instagram.com/dial._.era/">ig</a></span></div>
+  </div>
+  <div class="footer-bottom-line">Copyright © 2026 DialEra. All rights reserved.</div>
+</div>

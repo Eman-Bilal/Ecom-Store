@@ -1,0 +1,26 @@
+
+
+<div class="checkout-grid">
+  <div class="checkout-form">
+    <h3>Billing Details</h3>
+    <label class="field-label">Full name</label>
+    <input class="field" [(ngModel)]="fullName" placeholder="Rameesha Shafiq" />
+    <label class="field-label">Street address</label>
+    <input class="field" [(ngModel)]="address" placeholder="House 12, Street 5" />
+    <div class="field-row">
+      <div><label class="field-label">City</label><input class="field" [(ngModel)]="city" placeholder="Lahore" /></div>
+      <div><label class="field-label">Postal code</label><input class="field" [(ngModel)]="postalCode" placeholder="54000" /></div>
+    </div>
+  </div>
+  <div class="order-box">
+    <h3>Your Order</h3>
+    <div class="order-line"><span>Meridian Classic Automatic</span><span>Rs. 24,500</span></div>
+    <div class="order-line"><span>Steel Mesh Strap</span><span>Rs. 4,200</span></div>
+    <div class="order-line"><span>Shipping — Flat rate</span><span>Rs. 500</span></div>
+    <div class="order-line total"><span>Total</span><span>Rs. 29,200</span></div>
+    <div class="pay-methods">
+      <div class="pay-method active"><span>Cash on delivery</span><span>●</span></div>
+    </div>
+    <button class="btn-brass btn-full" (click)="placeOrder()">Place order</button>
+  </div>
+</div>
