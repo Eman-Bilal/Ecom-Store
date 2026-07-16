@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public class CategoryController {
   private final CategoryService categoryService;
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/create")
   public ResponseEntity<Category> create(@Valid @RequestBody  Category category){
     Category saved= categoryService.createCategory(category);
@@ -27,21 +29,26 @@ public class CategoryController {
     return ResponseEntity.ok(categoryService.getAll());
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/update/{id}")
   public ResponseEntity<String > update(@PathVariable long id,@Valid @RequestBody Category category){
     categoryService.updateCategory(id, category);
     return ResponseEntity.ok("Record updated Successfully");
   }
+
   @GetMapping("/{id}")
   public ResponseEntity<Category> getCategoryById(@PathVariable long id){
     return ResponseEntity.ok(categoryService.getById(id));
   }
+
   @DeleteMapping("/delete/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> deleteCategory(@PathVariable long id){
     categoryService.deleteCategory(id);
     return ResponseEntity.ok("Category safely inactivated");
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/reactivate/{id}")
   public ResponseEntity<Category> reactivate(@PathVariable Long id) {
     return ResponseEntity.ok(categoryService.reactivateCategory(id));
