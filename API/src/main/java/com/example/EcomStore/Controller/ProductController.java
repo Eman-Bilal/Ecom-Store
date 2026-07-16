@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ public class ProductController {
 
   private final ProductService productService;
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/create/{id}")
   public ResponseEntity<Product> create(@Valid @RequestBody Product product, @PathVariable long id) {
     Product saved = productService.createProduct(id, product);
@@ -34,11 +36,13 @@ public class ProductController {
     return ResponseEntity.ok(productService.getAll());
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{id}")
   public ResponseEntity<Product> getById(@PathVariable String id) {
     return ResponseEntity.ok(productService.getById(id));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/update/{id}/{categoryId}")
   public ResponseEntity<Product> update(@PathVariable String id,
                                         @Valid @RequestBody Product product,
@@ -46,12 +50,14 @@ public class ProductController {
     return ResponseEntity.ok(productService.updateProduct(id, product, categoryId));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<String> delete(@PathVariable String id) {
     productService.deleteProduct(id);
     return ResponseEntity.ok("Product safely inactivated");
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/reactivate/{id}")
   public ResponseEntity<Product> reactivate(@PathVariable String id) {
     return ResponseEntity.ok(productService.reactivateProduct(id));
