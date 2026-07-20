@@ -68,8 +68,9 @@ public class ProductController {
       @RequestParam(required = false) String name,
       @RequestParam(required = false) BigDecimal minPrice,
       @RequestParam(required = false) BigDecimal maxPrice,
-      @RequestParam(required = false) Long categoryId) {
-    return ResponseEntity.ok(productService.searchProducts(name, minPrice, maxPrice, categoryId));
+      @RequestParam(required = false) Long categoryId,
+      @RequestParam(required = false) String sortBy) {
+    return ResponseEntity.ok(productService.searchProducts(name, minPrice, maxPrice, categoryId, sortBy));
   }
 
 }
