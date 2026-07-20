@@ -102,4 +102,18 @@ public class CustomerOrderService {
     return customerOrderRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
   }
+
+  public List<CustomerOrder> getAll() {
+    return customerOrderRepository.findAll();
+  }
+
+//Track order for customer
+//  public CustomerOrder getByOrderNumberAndEmail(String orderNumber, String email) {
+//    CustomerOrder order = customerOrderRepository.findByOrderNumber(orderNumber)
+//        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+//    if (!order.getEmail().equalsIgnoreCase(email)) {
+//      throw new ResourceNotFoundException("Order not found");   // deliberately same message
+//    }
+//    return order;
+//  }
 }
