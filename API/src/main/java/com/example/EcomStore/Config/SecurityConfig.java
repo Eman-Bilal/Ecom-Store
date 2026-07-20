@@ -4,6 +4,7 @@ import com.example.EcomStore.Security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -32,17 +33,9 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/products/getAll", "/api/products/search",
-                "/api/products/category/**", "/api/products/{id}").permitAll()
-            .requestMatchers("/api/categories/getAll", "/api/categories/{id}").permitAll()
-            .requestMatchers("/api/orders/checkout").permitAll()
-            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-            .requestMatchers("/api/admin/register").permitAll()
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()   // @PreAuthorize on individual methods does the gatekeeping
         )
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
     return http.build();
   }
 
