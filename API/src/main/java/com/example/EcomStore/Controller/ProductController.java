@@ -20,9 +20,9 @@ public class ProductController {
   private final ProductService productService;
 
   @PreAuthorize("hasRole('ADMIN')")
-  @PostMapping("/create/{id}")
-  public ResponseEntity<Product> create(@Valid @RequestBody Product product, @PathVariable long id) {
-    Product saved = productService.createProduct(id, product);
+  @PostMapping("/{categoryId}")
+  public ResponseEntity<Product> create(@Valid @RequestBody Product product, @PathVariable long categoryId) {
+    Product saved = productService.createProduct(categoryId, product);
     return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
 
@@ -31,19 +31,18 @@ public class ProductController {
     return ResponseEntity.ok(productService.getByCategory(categoryId));
   }
 
-  @GetMapping("/getAll")
+  @GetMapping
   public ResponseEntity<List<Product>> getAll() {
     return ResponseEntity.ok(productService.getAll());
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{id}")
   public ResponseEntity<Product> getById(@PathVariable String id) {
     return ResponseEntity.ok(productService.getById(id));
   }
 
   @PreAuthorize("hasRole('ADMIN')")
-  @PutMapping("/update/{id}/{categoryId}")
+  @PutMapping("/{id}/{categoryId}")
   public ResponseEntity<Product> update(@PathVariable String id,
                                         @Valid @RequestBody Product product,
                                         @PathVariable long categoryId) {
@@ -51,14 +50,14 @@ public class ProductController {
   }
 
   @PreAuthorize("hasRole('ADMIN')")
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<String> delete(@PathVariable String id) {
     productService.deleteProduct(id);
     return ResponseEntity.ok("Product safely inactivated");
   }
 
   @PreAuthorize("hasRole('ADMIN')")
-  @PatchMapping("/reactivate/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<Product> reactivate(@PathVariable String id) {
     return ResponseEntity.ok(productService.reactivateProduct(id));
   }

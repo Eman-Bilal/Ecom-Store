@@ -1,7 +1,7 @@
 package com.example.EcomStore.Controller;
 
 import com.example.EcomStore.Entities.Admin;
-import com.example.EcomStore.Security.JwtService;
+import com.example.EcomStore.Service.JwtService;
 import com.example.EcomStore.Service.AdminService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
