@@ -30,11 +30,11 @@ public class CategoryService {
         .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
   }
 
-  public Category updateCategory(Long id, Category updatedCategory) {
+  public void updateCategory(Long id, Category updatedCategory) {
     Category existing = getById(id);
     existing.setCategoryName(updatedCategory.getCategoryName());
     existing.setDescription(updatedCategory.getDescription());
-    return categoryRepository.save(existing);
+    categoryRepository.save(existing);
   }
 
   public void deleteCategory(Long id) {

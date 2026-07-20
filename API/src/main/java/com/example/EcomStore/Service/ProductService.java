@@ -8,9 +8,13 @@ import com.example.EcomStore.Repository.CategoryRepository;
 import com.example.EcomStore.Repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -81,14 +85,23 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public List<Product> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Long categoryId) {
+  public List<Product> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Long categoryId, String sortBy ){
     List<Product> products = productRepository.findByActiveTrue();
 
-    return products.stream()
+    List<Product> filtered = products.stream()
         .filter(p -> name == null || p.getName().toLowerCase().contains(name.toLowerCase()))
         .filter(p -> minPrice == null || p.getPrice().compareTo(minPrice) >= 0)
         .filter(p -> maxPrice == null || p.getPrice().compareTo(maxPrice) <= 0)
         .filter(p -> categoryId == null || p.getCategory().getId().equals(categoryId))
-        .toList();
+        .collect(Collectors.toCollection(ArrayList::new));
+
+    if ("price_asc".equals(sortBy)) {
+      filtered.sort(Comparator.comparing(Product::getPrice));
+    } else if ("price_desc".equals(sortBy)) {
+      filtered.sort(Comparator.comparing(Product::getPrice).reversed());
+    } else if ("newest".equals(sortBy)) {
+      filtered.sort(Comparator.comparing(Product::getCreatedAt).reversed());
+    }
+    return filtered;
   }
 }
