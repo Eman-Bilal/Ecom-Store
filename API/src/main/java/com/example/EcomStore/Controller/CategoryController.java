@@ -13,35 +13,34 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/categories/")
+@RequestMapping("/api/categories")
 public class CategoryController {
   private final CategoryService categoryService;
 
   @PreAuthorize("hasRole('ADMIN')")
-  @PostMapping("/create")
+  @PostMapping // create category
   public ResponseEntity<Category> create(@Valid @RequestBody  Category category){
     Category saved= categoryService.createCategory(category);
     return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
 
-  @GetMapping("/getAll")
+  @GetMapping //get all categories
   public ResponseEntity<List<Category>> getAllCategories(){
     return ResponseEntity.ok(categoryService.getAll());
   }
 
   @PreAuthorize("hasRole('ADMIN')")
-  @PutMapping("/update/{id}")
-  public ResponseEntity<String > update(@PathVariable long id,@Valid @RequestBody Category category){
-    categoryService.updateCategory(id, category);
-    return ResponseEntity.ok("Record updated Successfully");
+  @PutMapping("/{id}")
+  public ResponseEntity<Category> update(@PathVariable Long id, @Valid @RequestBody Category category){
+    return ResponseEntity.ok(categoryService.updateCategory(id, category));
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{id}") // get category through id
   public ResponseEntity<Category> getCategoryById(@PathVariable long id){
     return ResponseEntity.ok(categoryService.getById(id));
   }
 
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/{id}") // delete using id
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> deleteCategory(@PathVariable long id){
     categoryService.deleteCategory(id);
@@ -49,7 +48,7 @@ public class CategoryController {
   }
 
   @PreAuthorize("hasRole('ADMIN')")
-  @PatchMapping("/reactivate/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<Category> reactivate(@PathVariable Long id) {
     return ResponseEntity.ok(categoryService.reactivateCategory(id));
   }

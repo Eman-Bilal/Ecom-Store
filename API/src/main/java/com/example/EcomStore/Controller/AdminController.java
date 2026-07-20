@@ -14,14 +14,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/admin/")
+@RequestMapping("/api/admins")
 
 public class AdminController {
 
   private final AdminService adminService;
 
   @PreAuthorize("hasRole('ADMIN')")
-  @GetMapping("getAll")
+  @GetMapping
   public List<Admin> getAll(){
     return adminService.getAll();
   }
