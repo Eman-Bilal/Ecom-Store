@@ -6,9 +6,8 @@ export type AppMode = 'customer' | 'admin';
 export class AppModeService {
   mode = signal<AppMode>('customer');
 
-  // Hardcoded for now — replace with a POST /api/auth/admin-login call once backend is ready
   private adminCredentials = [
-    { email: 'admin@dialera.com', password: 'Admin@123' },
+    { email: 'rameeshashafiq73@gmail.com', password: 'Admin@123' },
   ];
 
   verifyAdmin(email: string, password: string): boolean {
