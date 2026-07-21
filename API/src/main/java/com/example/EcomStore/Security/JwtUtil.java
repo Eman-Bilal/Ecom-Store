@@ -1,4 +1,4 @@
-package com.example.EcomStore.Service;
+package com.example.EcomStore.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
