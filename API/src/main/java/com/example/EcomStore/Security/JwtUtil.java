@@ -1,4 +1,4 @@
-package com.example.EcomStore.Service;
+package com.example.EcomStore.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
-public class JwtService {
+public class JwtUtil {
 
   @Value("${jwt.secret}")
   private String secret;

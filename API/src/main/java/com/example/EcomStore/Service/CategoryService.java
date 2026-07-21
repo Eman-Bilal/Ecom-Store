@@ -16,9 +16,13 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final ProductRepository productRepository;
+  private final EmailService emailService;
 
   public Category createCategory(Category category) {
-    return categoryRepository.save(category);
+    Category saved = categoryRepository.save(category);
+    emailService.sendAdminNotification("Category created",
+        "A new category was created: " + saved.getCategoryName());
+    return saved;
   }
 
   public List<Category> getAll() {
@@ -34,9 +38,11 @@ public class CategoryService {
     Category existing = getById(id);
     existing.setCategoryName(updatedCategory.getCategoryName());
     existing.setDescription(updatedCategory.getDescription());
-    categoryRepository.save(existing);
-
-    return existing;
+    Category saved= categoryRepository.save(existing);
+    emailService.sendAdminNotification("Category updated",
+        "A category with id and name: "
+        + id+" ,"+ existing.getCategoryName() +" was updated" );
+    return saved;
   }
 
   public void deleteCategory(Long id) {
@@ -47,6 +53,9 @@ public class CategoryService {
     List<Product> products = productRepository.findByCategoryId(id);
     products.forEach(p -> p.setActive(false));
     productRepository.saveAll(products);
+    emailService.sendAdminNotification("Category Deleted",
+        "A category with id and name: "+id+" ,"+ category.getCategoryName()+ " was deleted ");
+
   }
 
   public Category reactivateCategory(Long id) {
@@ -58,6 +67,8 @@ public class CategoryService {
     List<Product> products = productRepository.findByCategoryId(id);
     products.forEach(p -> p.setActive(true));
     productRepository.saveAll(products);
+    emailService.sendAdminNotification("Category Reactivated","A category with id and name: "
+        +id+" ,"+ category.getCategoryName()+"was reactivated ");
 
     return category;
   }

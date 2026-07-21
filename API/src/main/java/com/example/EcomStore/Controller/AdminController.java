@@ -1,5 +1,6 @@
 package com.example.EcomStore.Controller;
 
+import com.example.EcomStore.Dto.AdminResponse;
 import com.example.EcomStore.Dto.RegisterRequest;
 import com.example.EcomStore.Entities.Admin;
 import com.example.EcomStore.Service.AdminService;
@@ -22,8 +23,10 @@ public class AdminController {
 
   @PreAuthorize("hasRole('ADMIN')")
   @GetMapping
-  public List<Admin> getAll(){
-    return adminService.getAll();
+  public List<AdminResponse> getAll() {
+    return adminService.getAll().stream()
+        .map(AdminResponse::fromEntity)
+        .toList();
   }
 
   @PostMapping("/register")

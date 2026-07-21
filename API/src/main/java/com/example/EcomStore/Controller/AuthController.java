@@ -1,7 +1,7 @@
 package com.example.EcomStore.Controller;
 
 import com.example.EcomStore.Entities.Admin;
-import com.example.EcomStore.Service.JwtService;
+import com.example.EcomStore.Security.JwtUtil;
 import com.example.EcomStore.Service.AdminService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class AuthController {
 
   private final AdminService adminService;
   private final PasswordEncoder passwordEncoder;
-  private final JwtService jwtService;
+  private final JwtUtil jwtUtil;
 
   @PostMapping("/login")
   public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
@@ -33,7 +33,7 @@ public class AuthController {
       throw new BadCredentialsException("Invalid email or password");
     }
 
-    String token = jwtService.generateToken(admin.getEmail(), admin.getRole().name());
+    String token = jwtUtil.generateToken(admin.getEmail(), admin.getRole().name());
     return ResponseEntity.ok(Map.of("token", token));
   }
 

@@ -1,6 +1,5 @@
 package com.example.EcomStore.Security;
 
-import com.example.EcomStore.Service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-  private final JwtService jwtService;
+  private final JwtUtil jwtUtil;
 
   @Override
   protected void doFilterInternal(
@@ -36,9 +35,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     String token = authHeader.substring(7);
 
-    if (jwtService.isTokenValid(token)  && SecurityContextHolder.getContext().getAuthentication() == null) {
-      String email = jwtService.extractEmail(token);
-      String role = jwtService.extractRole(token);
+    if (jwtUtil.isTokenValid(token)  && SecurityContextHolder.getContext().getAuthentication() == null) {
+      String email = jwtUtil.extractEmail(token);
+      String role = jwtUtil.extractRole(token);
 
       var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
       var authToken = new UsernamePasswordAuthenticationToken(email, null, authorities);   // no password as authenticating jwt only
