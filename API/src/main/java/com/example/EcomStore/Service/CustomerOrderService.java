@@ -27,6 +27,8 @@ public class CustomerOrderService {
   private final OrderItemsRepository orderItemsRepository;
   private final ProductRepository productRepository;
   private final ProductService productService;
+  private final EmailService emailService;
+
 
   private String generateOrderNumber() {
     LocalDate today = LocalDate.now();
@@ -44,7 +46,7 @@ public class CustomerOrderService {
     List<OrderItems> orderItemsList = new ArrayList<>();
     BigDecimal subtotal = BigDecimal.ZERO;
 
-    // Build order first (needed to link items), save later once totals are known
+    // Build order first, save later once totals are known
     CustomerOrder order = new CustomerOrder();
     order.setFirstName(request.getFirstName());
     order.setLastName(request.getLastName());
@@ -95,6 +97,13 @@ public class CustomerOrderService {
     orderItemsList.forEach(item -> item.setOrder(savedOrder));
     orderItemsRepository.saveAll(orderItemsList);
 
+    emailService.sendAdminNotification(
+        "New Order Placed: " + savedOrder.getOrderNumber(),
+        "A new order was placed by " + savedOrder.getFirstName() + " " + savedOrder.getLastName()
+            + " (" + savedOrder.getEmail() + ").\n"
+            + "Order Number: " + savedOrder.getOrderNumber() + "\n"
+            + "Total: Rs. " + savedOrder.getTotalAmount()
+    );
     return savedOrder;
   }
 
@@ -106,6 +115,8 @@ public class CustomerOrderService {
   public List<CustomerOrder> getAll() {
     return customerOrderRepository.findAll();
   }
+
+
 
 //Track order for customer
 //  public CustomerOrder getByOrderNumberAndEmail(String orderNumber, String email) {

@@ -22,12 +22,15 @@ public class ProductService {
 
   private final ProductRepository productRepository;
   private final CategoryRepository categoryRepository;
+  private final EmailService emailService;
 
   public Product createProduct(long categoryId, Product product) {
     Category category = categoryRepository.findByIdAndActiveTrue(categoryId)
         .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
     product.setCategory(category);
     syncStatus(product);
+    emailService.sendAdminNotification("A product is created",
+        "A product was added in the category with id and name: "+ categoryId +" ,"+category.getCategoryName());
     return productRepository.save(product);
   }
 
@@ -61,6 +64,8 @@ public class ProductService {
       existing.setCategory(newCategory);
     }
     syncStatus(existing);
+    emailService.sendAdminNotification("Product updated",
+        "A product was updated with id and name: "+id +", " + updatedProduct.getName());
     return productRepository.save(existing);
   }
 
@@ -76,13 +81,16 @@ public class ProductService {
     Product product = getById(id);
     product.setActive(false);
     productRepository.save(product);
+    emailService.sendAdminNotification("Product Deleted","A product with id and name: "+ id+" ,"+ product.getName()+" was deleted");
   }
 
   public Product reactivateProduct(String id) {
     Product product = productRepository.findByIdAndActiveFalse(id)
         .orElseThrow(() -> new ResourceNotFoundException("Inactive product not found with id: " + id));
     product.setActive(true);
+    emailService.sendAdminNotification("Product Reactivated","A product with id and name: "+ id+" ,"+ product.getName()+" was reactivated");
     return productRepository.save(product);
+
   }
 
   public List<Product> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Long categoryId, String sortBy ){
