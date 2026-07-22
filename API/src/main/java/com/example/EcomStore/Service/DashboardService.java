@@ -51,6 +51,7 @@ public class DashboardService {
 
   private RecentOrderDto toRecentOrderDto(CustomerOrder order) {
     return new RecentOrderDto(
+        order.getId(),
         order.getOrderNumber(),
         order.getFirstName() + " " + order.getLastName(),
         order.getTotalAmount(),

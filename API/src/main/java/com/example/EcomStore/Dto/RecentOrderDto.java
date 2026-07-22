@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 public class RecentOrderDto {
+  private String id;
   private String orderNumber;
   private String customerName;
   private BigDecimal totalAmount;
