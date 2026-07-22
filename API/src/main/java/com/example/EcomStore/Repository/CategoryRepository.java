@@ -14,5 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category,String> {
   Optional<Category> findByIdAndActiveFalse(Long id);
   @Query("SELECT oi.product.id, SUM(oi.quantity) as totalSold FROM OrderItems oi GROUP BY oi.product.id ORDER BY totalSold DESC")
   List<Object[]> findBestSellingProductIds();
+  long countByActiveTrue();
 
 }
