@@ -2,6 +2,7 @@ package com.example.EcomStore.Controller;
 
 import com.example.EcomStore.Dto.CreateOrderRequest;
 import com.example.EcomStore.Entities.CustomerOrder;
+import com.example.EcomStore.Entities.OrderStatus;
 import com.example.EcomStore.Exception.ResourceNotFoundException;
 import com.example.EcomStore.Repository.CustomerOrderRepository;
 import com.example.EcomStore.Service.CustomerOrderService;
@@ -50,10 +51,18 @@ public class CustomerOrderController {
     return ResponseEntity.ok(customerOrderService.getAll());
   }
 
-//  @GetMapping("/track")
-//  public ResponseEntity<CustomerOrder> trackOrder(
-//      @RequestParam String orderNumber,
-//      @RequestParam String email) {
-//    return ResponseEntity.ok(customerOrderService.getByOrderNumberAndEmail(orderNumber, email));
-//  }
+  @GetMapping("/track")
+  public ResponseEntity<CustomerOrder> trackOrder(
+      @RequestParam String orderNumber,
+      @RequestParam String email) {
+    return ResponseEntity.ok(customerOrderService.getByOrderNumberAndEmail(orderNumber, email));
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PatchMapping("/{id}/status")
+  public ResponseEntity<CustomerOrder> updateStatus(
+      @PathVariable String id,
+      @RequestParam OrderStatus status) {
+    return ResponseEntity.ok(customerOrderService.updateOrderStatus(id, status));
+  }
 }
