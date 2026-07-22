@@ -18,8 +18,13 @@ public class EmailService {
 
   @Async
   public void sendAdminNotification(String subject, String body) {
+    sendEmail(adminEmail, subject, body);
+  }
+
+  @Async
+  public void sendEmail(String to, String subject, String body) {
     SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(adminEmail);
+    message.setTo(to);
     message.setSubject(subject);
     message.setText(body);
     mailSender.send(message);

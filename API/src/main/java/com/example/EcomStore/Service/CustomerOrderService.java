@@ -9,6 +9,8 @@ import com.example.EcomStore.Repository.CustomerOrderRepository;
 import com.example.EcomStore.Repository.OrderItemsRepository;
 import com.example.EcomStore.Repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,6 @@ public class CustomerOrderService {
   private final ProductService productService;
   private final EmailService emailService;
 
-
   private String generateOrderNumber() {
     LocalDate today = LocalDate.now();
     LocalDateTime startOfDay = today.atStartOfDay();
@@ -42,11 +43,9 @@ public class CustomerOrderService {
 
   @Transactional
   public CustomerOrder createOrder(CreateOrderRequest request) {
-
     List<OrderItems> orderItemsList = new ArrayList<>();
     BigDecimal subtotal = BigDecimal.ZERO;
 
-    // Build order first, save later once totals are known
     CustomerOrder order = new CustomerOrder();
     order.setFirstName(request.getFirstName());
     order.setLastName(request.getLastName());
@@ -67,7 +66,6 @@ public class CustomerOrderService {
             "Insufficient stock for " + product.getName() + ". Available: " + product.getQuantityInStock());
       }
 
-      // Decrement stock, keep status in sync
       product.setQuantityInStock(product.getQuantityInStock() - itemReq.getQuantity());
       productService.syncStatus(product);
       productRepository.save(product);
@@ -86,7 +84,7 @@ public class CustomerOrderService {
       orderItemsList.add(orderItem);
     }
 
-    BigDecimal shippingFee = BigDecimal.valueOf(200); // flat fee for now
+    BigDecimal shippingFee = BigDecimal.valueOf(200);
     BigDecimal totalAmount = subtotal.add(shippingFee);
 
     order.setSubtotal(subtotal);
@@ -97,13 +95,14 @@ public class CustomerOrderService {
     orderItemsList.forEach(item -> item.setOrder(savedOrder));
     orderItemsRepository.saveAll(orderItemsList);
 
-    emailService.sendAdminNotification(
+    emailService.sendEmail(
         "New Order Placed: " + savedOrder.getOrderNumber(),
         "A new order was placed by " + savedOrder.getFirstName() + " " + savedOrder.getLastName()
             + " (" + savedOrder.getEmail() + ").\n"
             + "Order Number: " + savedOrder.getOrderNumber() + "\n"
-            + "Total: Rs. " + savedOrder.getTotalAmount()
-    );
+            + "Total: Rs. " + savedOrder.getTotalAmount() + "Status: " + savedOrder.getOrderStatus().name() + "\n",
+        "Your order status has been updated to: " + order.getOrderStatus());
+
     return savedOrder;
   }
 
@@ -116,15 +115,34 @@ public class CustomerOrderService {
     return customerOrderRepository.findAll();
   }
 
+  public CustomerOrder getByOrderNumber(String orderNumber) {
+    return customerOrderRepository.findByOrderNumber(orderNumber)
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found with order number: " + orderNumber));
+  }
 
+  public CustomerOrder getByOrderNumberAndEmail(String orderNumber, String email) {
+    CustomerOrder order = customerOrderRepository.findByOrderNumber(orderNumber)
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    if (!order.getEmail().equalsIgnoreCase(email)) {
+      throw new ResourceNotFoundException("Order not found");
+    }
+    return order;
+  }
 
-//Track order for customer
-//  public CustomerOrder getByOrderNumberAndEmail(String orderNumber, String email) {
-//    CustomerOrder order = customerOrderRepository.findByOrderNumber(orderNumber)
-//        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-//    if (!order.getEmail().equalsIgnoreCase(email)) {
-//      throw new ResourceNotFoundException("Order not found");   // deliberately same message
-//    }
-//    return order;
-//  }
+  public CustomerOrder updateOrderStatus(String id, OrderStatus newStatus) {
+    CustomerOrder order = getById(id);
+
+    if (order.getOrderStatus() == OrderStatus.DELIVERED || order.getOrderStatus() == OrderStatus.CANCELLED) {
+      throw new IllegalStateException("Cannot change status of a finalized order");
+    }
+
+    order.setOrderStatus(newStatus);
+    CustomerOrder saved = customerOrderRepository.save(order);
+
+    emailService.sendAdminNotification(saved.getEmail(),
+        "Order " + saved.getOrderNumber() + "\n Update"+
+        "Your order status has been updated to: " + newStatus.name());
+
+    return saved;
+  }
 }

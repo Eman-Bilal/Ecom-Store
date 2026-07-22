@@ -8,7 +8,6 @@ import com.example.EcomStore.Repository.CategoryRepository;
 import com.example.EcomStore.Repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class ProductService {
     product.setCategory(category);
     syncStatus(product);
     emailService.sendAdminNotification("A product is created",
-        "A product was added in the category with id and name: "+ categoryId +" ,"+category.getCategoryName());
+        "A product was added in the category with id and name: " + categoryId + " ," + category.getCategoryName());
     return productRepository.save(product);
   }
 
@@ -56,7 +55,6 @@ public class ProductService {
     existing.setDescription(updatedProduct.getDescription());
     existing.setPrice(updatedProduct.getPrice());
     existing.setQuantityInStock(updatedProduct.getQuantityInStock());
-//    existing.setStatus(updatedProduct.getStatus());
 
     if (!existing.getCategory().getId().equals(newCategoryId)) {
       Category newCategory = categoryRepository.findByIdAndActiveTrue(newCategoryId)
@@ -65,7 +63,7 @@ public class ProductService {
     }
     syncStatus(existing);
     emailService.sendAdminNotification("Product updated",
-        "A product was updated with id and name: "+id +", " + updatedProduct.getName());
+        "A product was updated with id and name: " + id + ", " + updatedProduct.getName());
     return productRepository.save(existing);
   }
 
@@ -81,19 +79,20 @@ public class ProductService {
     Product product = getById(id);
     product.setActive(false);
     productRepository.save(product);
-    emailService.sendAdminNotification("Product Deleted","A product with id and name: "+ id+" ,"+ product.getName()+" was deleted");
+    emailService.sendAdminNotification("Product Deleted",
+        "A product with id and name: " + id + " ," + product.getName() + " was deleted");
   }
 
   public Product reactivateProduct(String id) {
     Product product = productRepository.findByIdAndActiveFalse(id)
         .orElseThrow(() -> new ResourceNotFoundException("Inactive product not found with id: " + id));
     product.setActive(true);
-    emailService.sendAdminNotification("Product Reactivated","A product with id and name: "+ id+" ,"+ product.getName()+" was reactivated");
+    emailService.sendAdminNotification("Product Reactivated",
+        "A product with id and name: " + id + " ," + product.getName() + " was reactivated");
     return productRepository.save(product);
-
   }
 
-  public List<Product> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Long categoryId, String sortBy ){
+  public List<Product> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Long categoryId, String sortBy) {
     List<Product> products = productRepository.findByActiveTrue();
 
     List<Product> filtered = products.stream()
