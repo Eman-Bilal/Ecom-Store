@@ -26,7 +26,9 @@
           <input class="field" [(ngModel)]="adminEmail" placeholder="Enter your email" />
           <label class="field-label">Admin password</label>
           <input class="field" type="password" [(ngModel)]="adminPassword" placeholder="••••••••" />
-          <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()">Enter admin panel</button>
+          <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()" [disabled]="loggingIn">
+            {{ loggingIn ? 'Logging in...' : 'Enter admin panel' }}
+          </button>
           @if (adminError) {
             <p class="admin-error">{{ adminError }}</p>
           }

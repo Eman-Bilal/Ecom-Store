@@ -1,0 +1,47 @@
+.register-form-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 30px;
+  max-width: 480px;
+}
+
+.admin-error-msg {
+  background: rgba(179, 67, 45, 0.1);
+  color: #B3432D;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+
+.success-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 40px;
+  max-width: 480px;
+  text-align: center;
+}
+
+.success-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(47, 75, 60, 0.12);
+  color: var(--moss);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 auto 20px;
+}
+
+.success-card h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.success-card p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}

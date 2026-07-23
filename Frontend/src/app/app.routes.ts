@@ -11,6 +11,7 @@ import { Contact } from './customer/contact/contact';
 import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
 import { AdminProducts } from './admin/admin-products/admin-products';
 import { adminModeGuard } from './guards/admin-mode-guard';
+import { Register } from './admin/register/register';
 
 const routeConfig: Routes = [
   {
@@ -33,6 +34,7 @@ const routeConfig: Routes = [
     children: [
       { path: 'dashboard', component: AdminDashboard },
       { path: 'products', component: AdminProducts },
+      { path: 'register', component: Register },
     ],
   },
 ];

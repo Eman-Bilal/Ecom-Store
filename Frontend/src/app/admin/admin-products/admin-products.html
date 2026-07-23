@@ -8,20 +8,25 @@
   <button class="btn-brass">+ Add product</button>
 </div>
 
-<div class="table-card">
-  <table class="admin-table">
-    <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
-    <tbody>
-      @for (product of products; track product.id) {
-        <tr>
-          <td class="name">{{ product.name }}</td>
-          <td>{{ product.category }}</td>
-          <td>{{ product.price }}</td>
-          <td>{{ product.stock }}</td>
-          <td><span class="badge" [class]="stockClass(product.stock)">{{ stockLabel(product.stock) }}</span></td>
-          <td class="row-actions"><a>Edit</a><a (click)="deleteProduct(product.id)">Delete</a></td>
-        </tr>
-      }
-    </tbody>
-  </table>
-</div>
+@if (loading) {
+  <p>Loading products...</p>
+} @else if (errorMessage) {
+  <p class="admin-error-msg">{{ errorMessage }}</p>
+} @else {
+  <div class="table-card">
+    <table class="data-table">
+      <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        @for (product of products; track product.id) {
+          <tr>
+            <td class="name">{{ product.name }}</td>
+            <td>Rs. {{ product.price | number }}</td>
+            <td>{{ product.quantityInStock }}</td>
+            <td><span class="badge" [class]="stockClass(product.quantityInStock)">{{ stockLabel(product.quantityInStock) }}</span></td>
+            <td class="row-actions"><a>Edit</a><a (click)="deleteProduct(product.id)">Delete</a></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
