@@ -18,4 +18,5 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems, String> 
     ORDER BY SUM(oi.quantity) DESC
     """)
   List<Object[]> findTopSellingProducts(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+  List<OrderItems> findByOrder_Id(String orderId);
 }
