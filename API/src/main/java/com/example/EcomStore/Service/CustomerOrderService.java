@@ -95,13 +95,28 @@ public class CustomerOrderService {
     orderItemsList.forEach(item -> item.setOrder(savedOrder));
     orderItemsRepository.saveAll(orderItemsList);
 
-    emailService.sendEmail(
+    // Notify admin
+    emailService.sendAdminNotification(
         "New Order Placed: " + savedOrder.getOrderNumber(),
         "A new order was placed by " + savedOrder.getFirstName() + " " + savedOrder.getLastName()
             + " (" + savedOrder.getEmail() + ").\n"
             + "Order Number: " + savedOrder.getOrderNumber() + "\n"
-            + "Total: Rs. " + savedOrder.getTotalAmount() + "Status: " + savedOrder.getOrderStatus().name() + "\n",
-        "Your order status has been updated to: " + order.getOrderStatus());
+            + "Status: " + savedOrder.getOrderStatus().name() + "\n"
+            + "Total: Rs. " + savedOrder.getTotalAmount()
+    );
+
+    // Notify customer
+    emailService.sendEmail(savedOrder.getEmail(),
+        "Order Confirmation: " + savedOrder.getOrderNumber(),
+        "Hi " + savedOrder.getFirstName() + ",\n\n"
+            + "Thank you for your order! Here are your order details:\n"
+            + "Order Number: " + savedOrder.getOrderNumber() + "\n"
+            + "Status: " + savedOrder.getOrderStatus().name() + "\n"
+            + "Total: Rs. " + savedOrder.getTotalAmount() + "\n\n"
+            + "You can track your order anytime using your order number and email.\n\n"
+            + "Thank you for shopping with us!"
+    );
+
 
     return savedOrder;
   }
@@ -139,10 +154,49 @@ public class CustomerOrderService {
     order.setOrderStatus(newStatus);
     CustomerOrder saved = customerOrderRepository.save(order);
 
-    emailService.sendAdminNotification(saved.getEmail(),
-        "Order " + saved.getOrderNumber() + "\n Update"+
+    emailService.sendEmail(saved.getEmail(),
+        "Order " + saved.getOrderNumber() + " Update",
         "Your order status has been updated to: " + newStatus.name());
 
     return saved;
+  }
+
+  @Transactional
+  public CustomerOrder cancelOrder(CustomerOrder order) {
+    if (order.getOrderStatus() == OrderStatus.SHIPPED
+        || order.getOrderStatus() == OrderStatus.DELIVERED
+        || order.getOrderStatus() == OrderStatus.CANCELLED) {
+      throw new IllegalStateException(
+          "Cannot cancel an order that is already " + order.getOrderStatus().name());
+    }
+
+    List<OrderItems> items = orderItemsRepository.findByOrder_Id(order.getId());
+    for (OrderItems item : items) {
+      Product product = item.getProduct();
+      product.setQuantityInStock(product.getQuantityInStock() + item.getQuantity());
+      productService.syncStatus(product);
+      productRepository.save(product);
+    }
+
+    order.setOrderStatus(OrderStatus.CANCELLED);
+    CustomerOrder saved = customerOrderRepository.save(order);
+
+    emailService.sendEmail(saved.getEmail(),
+        "Order " + saved.getOrderNumber() + " Cancelled",
+        "Your order has been cancelled. If you didn't request this, please contact us.");
+
+    emailService.sendAdminNotification(
+        "Order Cancelled: " + saved.getOrderNumber(),
+        "Order " + saved.getOrderNumber() + " (" + saved.getEmail() + ") was cancelled.");
+
+    return saved;
+  }
+
+  public CustomerOrder cancelOrderById(String id) {
+    return cancelOrder(getById(id));
+  }
+
+  public CustomerOrder cancelOrderByCustomer(String orderNumber, String email) {
+    return cancelOrder(getByOrderNumberAndEmail(orderNumber, email));
   }
 }
