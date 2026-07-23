@@ -14,6 +14,7 @@ import java.util.List;
 public class ContactMessageService {
 
   private final ContactMessageRepository contactMessageRepository;
+  private final EmailService emailService;
 
   public ContactMessage submit(ContactRequest request) {
     ContactMessage message = new ContactMessage();
@@ -21,6 +22,8 @@ public class ContactMessageService {
     message.setEmail(request.getEmail());
     message.setSubject(request.getSubject());
     message.setMessage(request.getMessage());
+    emailService.sendAdminNotification("Contact us form received",
+        "A new contact us form received with Subject: "+ request.getSubject());
     return contactMessageRepository.save(message);
   }
 
