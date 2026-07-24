@@ -29,12 +29,12 @@
   border: 1px solid var(--line);
 }
 
-.admin-table {
+.data-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.admin-table thead th {
+.data-table thead th {
   text-align: left;
   font-size: 11px;
   text-transform: uppercase;
@@ -45,17 +45,17 @@
   background: var(--paper-2);
 }
 
-.admin-table td {
+.data-table td {
   padding: 16px 20px;
   border-bottom: 1px solid var(--line);
   font-size: 14px;
 }
 
-.admin-table tbody tr:last-child td {
+.data-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.admin-table td.name {
+.data-table td.name {
   font-family: 'Cormorant Garamond', serif;
   font-size: 16px;
   font-weight: 600;
@@ -80,6 +80,73 @@
   font-weight: 600;
 }
 
-.badge.ok { background: rgba(47,75,60,0.12); color: var(--moss); }
-.badge.low { background: rgba(169,129,47,0.15); color: var(--brass); }
-.badge.out { background: rgba(179,67,45,0.1); color: #B3432D; }
+.badge.ok { 
+  background: rgba(47,75,60,0.12); 
+  color: var(--moss); 
+}
+.badge.low { 
+  background: rgba(169,129,47,0.15); 
+  color: var(--brass); 
+}
+.badge.out { 
+  background: rgba(179,67,45,0.1); 
+  color: #B3432D; 
+}
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrap .search-field {
+  padding-right: 40px;
+  margin-bottom: 0;
+}
+
+.search-icon-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
+.id-cell {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  background: #fff;
+  padding: 32px;
+  width: 460px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-card h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}

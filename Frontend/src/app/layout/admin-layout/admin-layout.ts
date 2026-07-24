@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AppModeService } from '../../services/app-mode';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-admin-layout',
@@ -10,9 +11,11 @@ import { AppModeService } from '../../services/app-mode';
 })
 export class AdminLayout {
   appMode = inject(AppModeService);
+  authService = inject(AuthService);
   router = inject(Router);
 
   exitAdmin() {
+    this.authService.logout();
     this.appMode.switchToCustomer();
     this.router.navigate(['/']);
   }

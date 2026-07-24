@@ -1,0 +1,47 @@
+<div class="admin-page-head">
+  <h1>Register New Admin</h1>
+  <p class="sub">Create a login for another authorized admin.</p>
+</div>
+
+<div class="register-form-card">
+  @if (errorMessage) {
+    <div class="admin-error-msg">{{ errorMessage }}</div>
+  }
+
+  <div class="field-row">
+    <div>
+      <label class="field-label">First name</label>
+      <input class="field" [(ngModel)]="firstName" placeholder="Ali" />
+    </div>
+    <div>
+      <label class="field-label">Last name</label>
+      <input class="field" [(ngModel)]="lastName" placeholder="Khan" />
+    </div>
+  </div>
+
+  <label class="field-label">Email</label>
+  <input class="field" type="email" [(ngModel)]="email" placeholder="admin@dialera.com" />
+  @if (emailError) {
+    <p class="field-error">{{ emailError }}</p>
+  }
+
+  <label class="field-label">Password</label>
+  <input class="field" type="password" [(ngModel)]="password" placeholder="Must include A-z, 0-9, symbol" />
+  @if (passwordError) {
+    <p class="field-error">{{ passwordError }}</p>
+  }
+
+  <label class="field-label">Phone</label>
+  <input class="field" [(ngModel)]="phone" placeholder="03001234567" />
+
+  <button class="btn-brass" [disabled]="submitting" (click)="onSubmit()">
+    {{ submitting ? 'Registering...' : 'Register admin' }}
+  </button>
+</div>
+
+@if (showToast) {
+  <div class="toast">
+    <span class="toast-icon">✓</span>
+    <span class="toast-message">Admin registered successfully!</span>
+  </div>
+}

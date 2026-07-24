@@ -21,12 +21,53 @@
       <button class="mode-btn" (click)="openAdminLogin()">🔐 Admin</button>
 
       @if (showAdminPrompt) {
-        <div class="admin-popover">
+        <div class="admin-popover" [class.is-logging-in]="loggingIn">
+          <div class="popover-header">
+            <span class="popover-icon">🔒</span>
+            <span class="popover-title">Admin Login</span>
+          </div>
+
           <label class="field-label">Admin email</label>
-          <input class="field" [(ngModel)]="adminEmail" placeholder="Enter your email" />
+          <input
+            class="field"
+            type="email"
+            [(ngModel)]="adminEmail"
+            #emailModel="ngModel"
+            email
+            placeholder="Enter your email"
+            [disabled]="loggingIn"
+          />
+          @if (emailModel.invalid && emailModel.touched) {
+            <p class="field-hint-error">Please enter a valid email address.</p>
+          }
+
           <label class="field-label">Admin password</label>
-          <input class="field" type="password" [(ngModel)]="adminPassword" placeholder="••••••••" />
-          <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()">Enter admin panel</button>
+          <div class="password-field-wrap">
+            <input
+              class="field"
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="adminPassword"
+              placeholder="••••••••"
+              [disabled]="loggingIn"
+            />
+            <button
+              type="button"
+              class="password-toggle-btn"
+              (click)="togglePasswordVisibility()"
+              [disabled]="loggingIn"
+            >
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+
+          <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()" [disabled]="loggingIn">
+            @if (loggingIn) {
+              <span class="spinner"></span> Logging in...
+            } @else {
+              Enter admin panel
+            }
+          </button>
+
           @if (adminError) {
             <p class="admin-error">{{ adminError }}</p>
           }

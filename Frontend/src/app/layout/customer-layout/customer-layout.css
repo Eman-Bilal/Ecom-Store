@@ -168,16 +168,64 @@
   width: 240px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
   z-index: 20;
+  transition: background 0.3s ease;
+}
+
+.admin-popover.is-logging-in {
+  background: var(--paper-2);
 }
 
 .admin-popover .field {
   margin-bottom: 12px;
 }
 
+.admin-popover .field:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.popover-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.popover-icon {
+  font-size: 16px;
+}
+
+.popover-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--moss);
+}
+
 .admin-error {
   color: #B3432D;
   font-size: 12px;
   margin-top: 10px;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .footer-bottom-line {
@@ -188,4 +236,38 @@
   font-size: 11px;
   color: #6E7C6F;
   text-align: center;
+}
+
+.password-field-wrap {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.password-field-wrap .field {
+  margin-bottom: 0;
+  padding-right: 40px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  line-height: 1;
+}
+
+.password-toggle-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.field-hint-error {
+  color: #B3432D;
+  font-size: 11px;
+  margin: -8px 0 12px;
 }

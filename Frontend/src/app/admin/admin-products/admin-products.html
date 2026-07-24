@@ -4,24 +4,95 @@
 </div>
 
 <div class="admin-toolbar">
-  <input class="field search-field" placeholder="Search products..." />
-  <button class="btn-brass">+ Add product</button>
+  <div class="search-wrap">
+    <input
+      class="field search-field"
+      placeholder="Search products..."
+      [(ngModel)]="searchName"
+      (keyup.enter)="onSearch()"
+    />
+    <button class="search-icon-btn" (click)="onSearch()">🔍</button>
+  </div>
+  <button class="btn-brass" (click)="openAddForm()">+ Add product</button>
 </div>
 
-<div class="table-card">
-  <table class="admin-table">
-    <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
-    <tbody>
-      @for (product of products; track product.id) {
+@if (loading) {
+  <p>Loading products...</p>
+} @else if (errorMessage) {
+  <p class="admin-error-msg">{{ errorMessage }}</p>
+} @else {
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
         <tr>
-          <td class="name">{{ product.name }}</td>
-          <td>{{ product.category }}</td>
-          <td>{{ product.price }}</td>
-          <td>{{ product.stock }}</td>
-          <td><span class="badge" [class]="stockClass(product.stock)">{{ stockLabel(product.stock) }}</span></td>
-          <td class="row-actions"><a>Edit</a><a (click)="deleteProduct(product.id)">Delete</a></td>
+          <th>ID</th>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th></th>
         </tr>
+      </thead>
+      <tbody>
+        @for (product of products; track product.id) {
+          <tr>
+            <td class="id-cell">{{ product.id | slice: 0:8 }}...</td>
+            <td class="name">{{ product.name }}</td>
+            <td>{{ product.category?.categoryName || '—' }}</td>
+            <td>Rs. {{ product.price | number }}</td>
+            <td>{{ product.quantityInStock }}</td>
+            <td><span class="badge" [class]="stockClass(product.quantityInStock)">{{ stockLabel(product.quantityInStock) }}</span></td>
+            <td class="row-actions">
+              <a (click)="openEditForm(product)">Edit</a>
+              <a (click)="deleteProduct(product.id)">Delete</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (showForm) {
+  <div class="modal-overlay" (click)="closeForm()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>{{ editingProduct ? 'Edit Product' : 'Add New Product' }}</h3>
+
+      @if (formError) {
+        <p class="admin-error-msg">{{ formError }}</p>
       }
-    </tbody>
-  </table>
-</div>
+
+      <label class="field-label">Product name</label>
+      <input class="field" [(ngModel)]="formName" placeholder="Metallic yellow" />
+
+      <label class="field-label">Description</label>
+      <input class="field" [(ngModel)]="formDescription" placeholder="Trending product!!!" />
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">Price</label>
+          <input class="field" type="number" [(ngModel)]="formPrice" placeholder="1999" />
+        </div>
+        <div>
+          <label class="field-label">Quantity in stock</label>
+          <input class="field" type="number" [(ngModel)]="formQuantityInStock" placeholder="25" />
+        </div>
+      </div>
+
+      <label class="field-label">Category</label>
+      <select class="field" [(ngModel)]="formCategoryId">
+        @for (cat of categories; track cat.id) {
+          <option [value]="cat.id">{{ cat.categoryName }}</option>
+        }
+      </select>
+
+      <div class="modal-actions">
+        <button class="btn-outline-dark" (click)="closeForm()">Cancel</button>
+        <button class="btn-brass" [disabled]="submitting" (click)="submitForm()">
+          {{ submitting ? 'Saving...' : (editingProduct ? 'Save changes' : 'Add product') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
