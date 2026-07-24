@@ -21,15 +21,26 @@ export class CustomerLayout {
   adminPassword = '';
   adminError = '';
   loggingIn = false;
+  showPassword = false;
 
   openAdminLogin() {
     this.showAdminPrompt = !this.showAdminPrompt;
     this.adminError = '';
   }
 
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
   submitAdminLogin() {
     if (!this.adminEmail || !this.adminPassword) {
       this.adminError = 'Email and password are required.';
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(this.adminEmail)) {
+      this.adminError = 'Please enter a valid email address.';
       return;
     }
 

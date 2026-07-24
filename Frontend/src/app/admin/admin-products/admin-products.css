@@ -92,3 +92,61 @@
   background: rgba(179,67,45,0.1); 
   color: #B3432D; 
 }
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrap .search-field {
+  padding-right: 40px;
+  margin-bottom: 0;
+}
+
+.search-icon-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+}
+
+.id-cell {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  background: #fff;
+  padding: 32px;
+  width: 460px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-card h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
