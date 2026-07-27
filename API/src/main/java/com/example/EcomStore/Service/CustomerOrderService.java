@@ -9,8 +9,6 @@ import com.example.EcomStore.Repository.CustomerOrderRepository;
 import com.example.EcomStore.Repository.OrderItemsRepository;
 import com.example.EcomStore.Repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +28,7 @@ public class CustomerOrderService {
   private final ProductRepository productRepository;
   private final ProductService productService;
   private final EmailService emailService;
+  private final AirtableService airtableService;
 
   private String generateOrderNumber() {
     LocalDate today = LocalDate.now();
@@ -38,7 +37,7 @@ public class CustomerOrderService {
 
     long orderCount = customerOrderRepository.countByCreatedAtBetween(startOfDay, endOfDay);
     String date = today.format(DateTimeFormatter.BASIC_ISO_DATE);
-    return String.format("ORD-%s-%04d", date, orderCount + 1);
+    return String.format("ORD-%s-%04d", date, orderCount + 2);
   }
 
   @Transactional
@@ -91,11 +90,10 @@ public class CustomerOrderService {
     order.setShippingFee(shippingFee);
     order.setTotalAmount(totalAmount);
 
-    CustomerOrder savedOrder = customerOrderRepository.save(order);
+    CustomerOrder savedOrder = customerOrderRepository.saveAndFlush(order);
     orderItemsList.forEach(item -> item.setOrder(savedOrder));
     orderItemsRepository.saveAll(orderItemsList);
 
-    // Notify admin
     emailService.sendAdminNotification(
         "New Order Placed: " + savedOrder.getOrderNumber(),
         "A new order was placed by " + savedOrder.getFirstName() + " " + savedOrder.getLastName()
@@ -105,7 +103,6 @@ public class CustomerOrderService {
             + "Total: Rs. " + savedOrder.getTotalAmount()
     );
 
-    // Notify customer
     emailService.sendEmail(savedOrder.getEmail(),
         "Order Confirmation: " + savedOrder.getOrderNumber(),
         "Hi " + savedOrder.getFirstName() + ",\n\n"
@@ -117,7 +114,7 @@ public class CustomerOrderService {
             + "Thank you for shopping with us!"
     );
 
-
+    airtableService.syncOrder(savedOrder, orderItemsList);
     return savedOrder;
   }
 
@@ -158,6 +155,8 @@ public class CustomerOrderService {
         "Order " + saved.getOrderNumber() + " Update",
         "Your order status has been updated to: " + newStatus.name());
 
+    List<OrderItems> items = orderItemsRepository.findByOrder_Id(saved.getId());
+    airtableService.syncOrder(saved, items);
     return saved;
   }
 
@@ -189,13 +188,16 @@ public class CustomerOrderService {
         "Order Cancelled: " + saved.getOrderNumber(),
         "Order " + saved.getOrderNumber() + " (" + saved.getEmail() + ") was cancelled.");
 
+    airtableService.syncOrder(saved, items);
     return saved;
   }
 
+  @Transactional
   public CustomerOrder cancelOrderById(String id) {
     return cancelOrder(getById(id));
   }
 
+  @Transactional
   public CustomerOrder cancelOrderByCustomer(String orderNumber, String email) {
     return cancelOrder(getByOrderNumberAndEmail(orderNumber, email));
   }
