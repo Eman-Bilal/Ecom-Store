@@ -33,13 +33,13 @@ public class ContactMessageController {
 
   @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{id}")
-  public ResponseEntity<ContactMessage> getById(@PathVariable Long id) {
+  public ResponseEntity<ContactMessage> getById(@PathVariable String id) {
     return ResponseEntity.ok(contactMessageService.getById(id));
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}/resolve")
-  public ResponseEntity<ContactMessage> markResolved(@PathVariable Long id) {
+  public ResponseEntity<ContactMessage> markResolved(@PathVariable String id) {
     return ResponseEntity.ok(contactMessageService.markResolved(id));
   }
 }

@@ -18,12 +18,11 @@
     <a [routerLink]="['/cart']">Cart <span class="cart-badge">{{ cartCount }}</span></a>
 
     <div class="mode-switch">
-      <button class="mode-btn" (click)="openAdminLogin()">🔐 Admin</button>
+      <button class="mode-btn" (click)="openAdminLogin()">Admin</button>
 
       @if (showAdminPrompt) {
         <div class="admin-popover" [class.is-logging-in]="loggingIn">
           <div class="popover-header">
-            <span class="popover-icon">🔒</span>
             <span class="popover-title">Admin Login</span>
           </div>
 
@@ -56,13 +55,14 @@
               (click)="togglePasswordVisibility()"
               [disabled]="loggingIn"
             >
-              {{ showPassword ? '🙈' : '👁️' }}
+              <i class="fa" [ngClass]="{ 'fa-eye-slash': !showPassword, 'fa-eye': showPassword }"></i>
             </button>
           </div>
 
           <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()" [disabled]="loggingIn">
             @if (loggingIn) {
-              <span class="spinner"></span> Logging in...
+              <!-- <span class="spinner"></span>  -->
+              Logging in...
             } @else {
               Enter admin panel
             }

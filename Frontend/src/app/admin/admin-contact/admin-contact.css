@@ -1,0 +1,97 @@
+.admin-page-head {
+  margin-bottom: 24px;
+}
+
+.admin-page-head h1 {
+  font-size: 28px;
+}
+
+.admin-page-head .sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.table-card {
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.data-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table td.name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.msg-row {
+  cursor: pointer;
+}
+
+.msg-row:hover {
+  background: var(--paper-2);
+}
+
+.msg-detail-row td {
+  background: var(--sage);
+  padding: 0 20px 16px;
+}
+
+.msg-detail {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  padding-top: 4px;
+}
+
+.row-actions a {
+  font-size: 12px;
+  color: var(--moss);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.row-actions a:hover {
+  color: var(--brass);
+}
+
+.badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.badge.ok { 
+    background: rgba(47,75,60,0.12); 
+    color: var(--moss); 
+}
+.badge.out { 
+    background: rgba(179,67,45,0.1); 
+    color: #B3432D; 
+}

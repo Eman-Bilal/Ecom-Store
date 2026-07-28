@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/admin';
 
@@ -11,17 +11,19 @@ import { AdminService } from '../../services/admin';
 export class Register {
   private adminService = inject(AdminService);
 
+  // Plain fields for ngModel-bound inputs
   firstName = '';
   lastName = '';
   email = '';
   password = '';
   phone = '';
 
-  emailError = '';
-  passwordError = '';
-  errorMessage = '';
-  submitting = false;
-  showToast = false;
+  // Render-critical state -> signals
+  emailError = signal('');
+  passwordError = signal('');
+  errorMessage = signal('');
+  submitting = signal(false);
+  showToast = signal(false);
 
   isValidEmail(email: string): boolean {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -73,24 +75,24 @@ export class Register {
   }
 
   onSubmit() {
-    this.errorMessage = '';
-    this.emailError = '';
-    this.passwordError = '';
+    this.errorMessage.set('');
+    this.emailError.set('');
+    this.passwordError.set('');
 
     if (!this.isValidEmail(this.email)) {
-      this.emailError = 'Please enter a valid email address.';
+      this.emailError.set('Please enter a valid email address.');
     }
 
     const passwordCheck = this.isValidPassword(this.password);
     if (passwordCheck) {
-      this.passwordError = passwordCheck;
+      this.passwordError.set(passwordCheck);
     }
 
-    if (this.emailError || this.passwordError) {
+    if (this.emailError() || this.passwordError()) {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
 
     this.adminService
       .register({
@@ -102,17 +104,17 @@ export class Register {
       })
       .subscribe({
         next: () => {
-          this.submitting = false;
-          this.showToast = true;
+          this.submitting.set(false);
+          this.showToast.set(true);
           this.resetFields();
 
           setTimeout(() => {
-            this.showToast = false;
+            this.showToast.set(false);
           }, 3000);
         },
         error: (err) => {
-          this.submitting = false;
-          this.errorMessage = err.error?.message || 'Registration has failed check fields.';
+          this.submitting.set(false);
+          this.errorMessage.set(err.error?.message || 'Registration has failed check fields.');
           console.error(err);
         },
       });
