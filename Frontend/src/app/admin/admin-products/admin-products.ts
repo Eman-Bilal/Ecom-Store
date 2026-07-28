@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { DecimalPipe, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService, Product, ProductFormData } from '../../services/product';
@@ -14,24 +14,23 @@ export class AdminProducts implements OnInit {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
 
-  products: Product[] = [];
-  categories: Category[] = [];
-  loading : boolean = true;
-  errorMessage = '';
+  // Render-critical state -> signals, so the view always updates reliably
+  products = signal<Product[]>([]);
+  categories = signal<Category[]>([]);
+  loading = signal(true);
+  errorMessage = signal('');
+  showForm = signal(false);
+  submitting = signal(false);
+  formError = signal('');
+  editingProduct = signal<Product | null>(null);
 
-  // Search
+  // Plain fields for ngModel-bound inputs (typing works fine either way)
   searchName = '';
-
-  // Add/Edit form state
-  showForm = false;
-  editingProduct: Product | null = null;
   formName = '';
   formDescription = '';
   formPrice: number | null = null;
   formQuantityInStock: number | null = null;
   formCategoryId: number | null = null;
-  formError = '';
-  submitting = false;
 
   ngOnInit() {
     this.fetchProducts();
@@ -39,16 +38,16 @@ export class AdminProducts implements OnInit {
   }
 
   fetchProducts() {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
     this.productService.getAllProducts().subscribe({
       next: (data) => {
-        this.products = data;
-        this.loading = false;
+        this.products.set(data);
+        this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage = 'Could not load products. Please check if the backend is running.';
-        this.loading = false;
+        this.errorMessage.set('Could not load products. Please check if the backend is running.');
+        this.loading.set(false);
         console.error(err);
       },
     });
@@ -57,7 +56,7 @@ export class AdminProducts implements OnInit {
   fetchCategories() {
     this.categoryService.getAllCategories().subscribe({
       next: (data) => {
-        this.categories = data;
+        this.categories.set(data);
       },
       error: (err) => console.error('Could not load categories:', err),
     });
@@ -68,15 +67,15 @@ export class AdminProducts implements OnInit {
       this.fetchProducts();
       return;
     }
-    this.loading = true;
+    this.loading.set(true);
     this.productService.searchProducts({ name: this.searchName.trim() }).subscribe({
       next: (data) => {
-        this.products = data;
-        this.loading = false;
+        this.products.set(data);
+        this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage = 'Search failed. Please try again.';
-        this.loading = false;
+        this.errorMessage.set('Search failed. Please try again.');
+        this.loading.set(false);
         console.error(err);
       },
     });
@@ -95,71 +94,74 @@ export class AdminProducts implements OnInit {
   }
 
   openAddForm() {
-    this.editingProduct = null;
+    this.editingProduct.set(null);
     this.formName = '';
     this.formDescription = '';
     this.formPrice = null;
     this.formQuantityInStock = null;
-    this.formCategoryId = this.categories.length ? this.categories[0].id : null;
-    this.formError = '';
-    this.showForm = true;
+    const cats = this.categories();
+    this.formCategoryId = cats.length ? cats[0].id : null;
+    this.formError.set('');
+    this.showForm.set(true);
   }
 
   openEditForm(product: Product) {
-    this.editingProduct = product;
+    this.editingProduct.set(product);
     this.formName = product.name;
     this.formDescription = product.description;
     this.formPrice = product.price;
     this.formQuantityInStock = product.quantityInStock;
     this.formCategoryId = product.category?.id ?? null;
-    this.formError = '';
-    this.showForm = true;
+    this.formError.set('');
+    this.showForm.set(true);
   }
 
   closeForm() {
-    this.showForm = false;
+    this.showForm.set(false);
   }
 
   submitForm() {
     if (!this.formName || !this.formDescription || this.formPrice == null || this.formQuantityInStock == null || this.formCategoryId == null) {
-      this.formError = 'Please fill in all fields.';
+      this.formError.set('Please fill in all fields.');
       return;
     }
 
-    this.submitting = true;
-    this.formError = '';
+    this.submitting.set(true);
+    this.formError.set('');
+
+    const currentlyEditing = this.editingProduct();
 
     const payload: ProductFormData = {
       name: this.formName,
       description: this.formDescription,
       price: this.formPrice,
       quantityInStock: this.formQuantityInStock,
-      active: this.editingProduct ? this.editingProduct.active : true,
+      active: currentlyEditing ? currentlyEditing.active : true,
     };
 
-    if (this.editingProduct) {
-      this.productService.updateProduct(this.editingProduct.id, this.formCategoryId, payload).subscribe({
+    if (currentlyEditing) {
+      this.productService.updateProduct(currentlyEditing.id, this.formCategoryId, payload).subscribe({
         next: (updated) => {
-          this.submitting = false;
-          this.showForm = false;
-          this.products = this.products.map((p) => (p.id === updated.id ? updated : p));
+          this.submitting.set(false);
+          this.showForm.set(false);
+          this.products.update((list) => list.map((p) => (p.id === updated.id ? updated : p)));
         },
         error: (err) => {
-          this.submitting = false;
-          this.formError = 'Could not update product. Please check the fields.';
+          this.submitting.set(false);
+          this.formError.set('Could not update product. Please check the fields.');
           console.error(err);
         },
       });
     } else {
       this.productService.createProduct(this.formCategoryId, payload).subscribe({
         next: (created) => {
-          this.submitting = false;
-          this.showForm = false;
-          this.products = [...this.products, created];
+          this.submitting.set(false);
+          this.showForm.set(false);
+          this.products.update((list) => [...list, created]);
         },
         error: (err) => {
-          this.submitting = false;
-          this.formError = 'Could not create product. Please check the fields.';
+          this.submitting.set(false);
+          this.formError.set('Could not create product. Please check the fields.');
           console.error(err);
         },
       });
@@ -169,7 +171,7 @@ export class AdminProducts implements OnInit {
   deleteProduct(id: string) {
     this.productService.deleteProduct(id).subscribe({
       next: () => {
-        this.products = this.products.filter((p) => p.id !== id);
+        this.products.update((list) => list.filter((p) => p.id !== id));
       },
       error: (err) => {
         console.error(err);
