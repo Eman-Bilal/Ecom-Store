@@ -7,7 +7,7 @@
   <div class="search-wrap">
     <input
       class="field search-field"
-      placeholder="Search products..."
+      placeholder="Search products by name"
       [(ngModel)]="searchName"
       (keyup.enter)="onSearch()"
     />
@@ -42,10 +42,19 @@
             <td>{{ product.category?.categoryName || '—' }}</td>
             <td>Rs. {{ product.price | number }}</td>
             <td>{{ product.quantityInStock }}</td>
-            <td><span class="badge" [class]="stockClass(product.quantityInStock)">{{ stockLabel(product.quantityInStock) }}</span></td>
+            <td>
+              <span class="badge" [class]="stockClass(product.quantityInStock)">{{ stockLabel(product.quantityInStock) }}</span>
+            </td>
             <td class="row-actions">
               <a (click)="openEditForm(product)">Edit</a>
-              <a (click)="deleteProduct(product.id)">Delete</a>
+              <button
+                type="button"
+                class="badge status-toggle"
+                [class]="product.active ? 'ok' : 'out'"
+                (click)="toggleStatus(product)"
+              >
+                {{ product.active ? 'Active' : 'Inactive' }}
+              </button>
             </td>
           </tr>
         }

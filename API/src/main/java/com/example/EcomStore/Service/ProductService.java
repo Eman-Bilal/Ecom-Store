@@ -40,7 +40,7 @@ public class ProductService {
   }
 
   public List<Product> getAll() {
-    return productRepository.findByActiveTrue();
+    return productRepository.findAll();
   }
 
   public Product getById(String id) {

@@ -32,12 +32,11 @@
               <select
                 class="status-select"
                 [class]="statusClass(order.orderStatus)"
-                [value]="order.orderStatus"
                 [disabled]="updatingOrderId() === order.id"
                 (change)="onStatusChange(order, $event)"
               >
                 @for (option of statusOptions; track option) {
-                  <option [value]="option">{{ option }}</option>
+                  <option [value]="option" [selected]="option === order.orderStatus">{{ option }}</option>
                 }
               </select>
             </td>
