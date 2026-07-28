@@ -8,6 +8,7 @@ import com.example.EcomStore.Repository.CategoryRepository;
 import com.example.EcomStore.Repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class ProductService {
     existing.setDescription(updatedProduct.getDescription());
     existing.setPrice(updatedProduct.getPrice());
     existing.setQuantityInStock(updatedProduct.getQuantityInStock());
+    existing.setImageUrl(updatedProduct.getImageUrl());
 
     if (!existing.getCategory().getId().equals(newCategoryId)) {
       Category newCategory = categoryRepository.findByIdAndActiveTrue(newCategoryId)
@@ -110,5 +112,14 @@ public class ProductService {
       filtered.sort(Comparator.comparing(Product::getCreatedAt).reversed());
     }
     return filtered;
+  }
+
+  private final FileStorageService fileStorageService;   // add to constructor injection
+
+  public Product uploadProductImage(String id, MultipartFile file) {
+    Product product = getById(id);
+    String imageUrl = fileStorageService.storeFile(file);
+    product.setImageUrl(imageUrl);
+    return productRepository.save(product);
   }
 }

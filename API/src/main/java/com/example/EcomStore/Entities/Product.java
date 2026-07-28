@@ -55,4 +55,8 @@ public class Product {
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
+  @NotBlank(message = "The product image can't be null")
+  @Column(nullable = false)
+  private String imageUrl;
 }

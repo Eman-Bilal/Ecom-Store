@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -72,4 +73,11 @@ public class ProductController {
     return ResponseEntity.ok(productService.searchProducts(name, minPrice, maxPrice, categoryId, sortBy));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
+  @PostMapping("/{id}/image")
+  public ResponseEntity<Product> uploadImage(
+      @PathVariable String id,
+      @RequestParam("file") MultipartFile file) {
+    return ResponseEntity.ok(productService.uploadProductImage(id, file));
+  }
 }
