@@ -150,3 +150,12 @@
   gap: 12px;
   margin-top: 16px;
 }
+
+.status-toggle {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-block;
+  width: 72px;
+  text-align: center;
+}

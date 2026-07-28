@@ -49,7 +49,8 @@ export class CustomerLayout {
     this.adminError = '';
 
     this.authService.login(this.adminEmail, this.adminPassword).subscribe({
-      next: () => {
+      next: (res) => {
+        localStorage.setItem('admin_token', res.token);
         this.loggingIn = false;
         this.showAdminPrompt = false;
         this.adminEmail = '';

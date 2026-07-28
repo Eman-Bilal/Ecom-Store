@@ -45,8 +45,13 @@ export class ProductService {
     return this.http.put<Product>(`${this.baseUrl}/${id}/${categoryId}`, product);
   }
 
-  deleteProduct(id: string): Observable<string> {
+   deleteProduct(id: string): Observable<string> {
     return this.http.delete(`${this.baseUrl}/${id}`, { responseType: 'text' });
+  }
+ 
+  // Reactivates a previously deactivated product (sets active = true)
+  reactivateProduct(id: string): Observable<Product> {
+    return this.http.patch<Product>(`${this.baseUrl}/${id}`, {});
   }
 
   searchProducts(filters: {

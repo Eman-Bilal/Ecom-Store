@@ -168,15 +168,32 @@ export class AdminProducts implements OnInit {
     }
   }
 
-  deleteProduct(id: string) {
-    this.productService.deleteProduct(id).subscribe({
-      next: () => {
-        this.products.update((list) => list.filter((p) => p.id !== id));
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Could not delete the product.');
-      },
-    });
+  toggleStatus(product: Product) {
+    if (product.active) {
+      this.productService.deleteProduct(product.id).subscribe({
+        next: () => {
+          // DELETE only returns a plain text message, not the updated product,
+          // so we manually flip the active flag in local state.
+          this.products.update((list) =>
+            list.map((p) => (p.id === product.id ? { ...p, active: false } : p))
+          );
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Could not deactivate the product.');
+        },
+      });
+    } else {
+      this.productService.reactivateProduct(product.id).subscribe({
+        next: (updated) => {
+          // PATCH returns the full updated product, so we use it directly.
+          this.products.update((list) => list.map((p) => (p.id === updated.id ? updated : p)));
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Could not activate the product.');
+        },
+      });
+    }
   }
 }
