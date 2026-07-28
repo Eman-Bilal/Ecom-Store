@@ -3,10 +3,11 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { FormsModule } from '@angular/forms';
 import { AppModeService } from '../../services/app-mode';
 import { AuthService } from '../../services/auth';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-customer-layout',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, FormsModule],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, FormsModule , NgClass],
   templateUrl: './customer-layout.html',
   styleUrl: './customer-layout.css',
 })
@@ -48,7 +49,8 @@ export class CustomerLayout {
     this.adminError = '';
 
     this.authService.login(this.adminEmail, this.adminPassword).subscribe({
-      next: () => {
+      next: (res) => {
+        localStorage.setItem('admin_token', res.token);
         this.loggingIn = false;
         this.showAdminPrompt = false;
         this.adminEmail = '';

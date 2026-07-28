@@ -1,18 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-
-interface TopProduct {
-  name: string;
-  units: number;
-  percent: number;
-}
-
-interface RecentOrder {
-  id: string;
-  customer: string;
-  total: number;
-  status: 'delivered' | 'shipped' | 'pending';
-}
+import { DashboardService, DashboardData } from '../../services/dashboard';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -20,23 +8,43 @@ interface RecentOrder {
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css',
 })
-export class AdminDashboard {
-  revenue = 184200;
-  ordersThisWeek = 46;
-  lowStockCount = 3;
-  totalProducts = 86;
+export class AdminDashboard implements OnInit {
+  private dashboardService = inject(DashboardService);
 
-  topProducts: TopProduct[] = [
-    { name: 'Meridian Classic Automatic', units: 32, percent: 92 },
-    { name: 'Oakridge Chronograph', units: 27, percent: 78 },
-    { name: 'Aria Mesh Watch', units: 21, percent: 60 },
-    { name: 'Steel Mesh Strap', units: 14, percent: 40 },
-  ];
+  dashboard = signal<DashboardData | null>(null);
+  loading = signal(true);
+  errorMessage = signal('');
 
-  recentOrders: RecentOrder[] = [
-    { id: '#1042', customer: 'Ali Khan', total: 24500, status: 'delivered' },
-    { id: '#1041', customer: 'Sara Ahmed', total: 4200, status: 'shipped' },
-    { id: '#1040', customer: 'Bilal Iqbal', total: 32900, status: 'pending' },
-    { id: '#1039', customer: 'Hina Malik', total: 19800, status: 'delivered' },
-  ];
+  ngOnInit() {
+    this.fetchDashboard();
+  }
+
+  fetchDashboard() {
+    this.loading.set(true);
+    this.errorMessage.set('');
+    this.dashboardService.getDashboard().subscribe({
+      next: (data) => {
+        this.dashboard.set(data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.errorMessage.set('Could not load dashboard data. Please check if the backend is running.');
+        this.loading.set(false);
+        console.error(err);
+      },
+    });
+  }
+
+  // Bar width is relative to the highest-selling product in the list
+  getBarPercent(unitsSold: number): number {
+    const products = this.dashboard()?.topProducts ?? [];
+    if (products.length === 0) return 0;
+    const max = Math.max(...products.map((p) => p.unitsSold));
+    if (max === 0) return 0;
+    return (unitsSold / max) * 100;
+  }
+
+  statusClass(status: string): string {
+    return status.toLowerCase();
+  }
 }

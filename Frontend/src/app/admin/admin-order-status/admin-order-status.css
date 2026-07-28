@@ -1,0 +1,86 @@
+.admin-page-head {
+  margin-bottom: 24px;
+}
+
+.admin-page-head h1 {
+  font-size: 28px;
+}
+
+.admin-page-head .sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.table-card {
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.data-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table td.name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.status-select {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.status-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status-select.pending { 
+    background: rgba(179,67,45,0.1); 
+    color: #B3432D; 
+}
+.status-select.processing { 
+    background: rgba(169,129,47,0.15); 
+    color: var(--brass); 
+}
+.status-select.shipped { 
+    background: rgba(169,129,47,0.15); 
+    color: var(--brass); 
+}
+.status-select.delivered { 
+    background: rgba(47,75,60,0.12); 
+    color: var(--moss); 
+}
+.status-select.cancelled { 
+    background: rgba(179,67,45,0.1); 
+    color: #B3432D; 
+}

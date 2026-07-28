@@ -31,11 +31,11 @@ public class ContactMessageService {
     return contactMessageRepository.findAll();
   }
 
-  public ContactMessage getById(Long id) {
+  public ContactMessage getById(String id) {
     return contactMessageRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Contact message not found with id: " + id));
   }
-  public ContactMessage markResolved(Long id) {
+  public ContactMessage markResolved(String id) {
     ContactMessage message = getById(id);
     message.setResolved(true);
     return contactMessageRepository.save(message);

@@ -1,0 +1,50 @@
+<div class="admin-page-head">
+  <h1>Orders</h1>
+  <p class="sub">{{ orders().length }} orders placed</p>
+</div>
+
+@if (loading()) {
+  <p>Loading orders...</p>
+} @else if (errorMessage()) {
+  <p class="admin-error-msg">{{ errorMessage() }}</p>
+} @else {
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>City</th>
+          <th>Total</th>
+          <th>Placed on</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of orders(); track order.id) {
+          <tr>
+            <td class="name">{{ order.orderNumber }}</td>
+            <td>{{ order.firstName }} {{ order.lastName }}</td>
+            <td>{{ order.city }}</td>
+            <td>Rs. {{ order.totalAmount | number }}</td>
+            <td>{{ order.createdAt | date: 'MMM d, y' }}</td>
+            <td>
+              <select
+                class="status-select"
+                [class]="statusClass(order.orderStatus)"
+                [disabled]="updatingOrderId() === order.id"
+                (change)="onStatusChange(order, $event)"
+              >
+                @for (option of statusOptions; track option) {
+                  <option [value]="option" [selected]="option === order.orderStatus">{{ option }}</option>
+                }
+              </select>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="sub">No orders yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

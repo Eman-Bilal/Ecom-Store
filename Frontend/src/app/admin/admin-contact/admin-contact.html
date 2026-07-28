@@ -1,0 +1,56 @@
+<div class="admin-page-head">
+  <h1>Contact Messages</h1>
+  <p class="sub">{{ messages().length }} messages received</p>
+</div>
+
+@if (loading()) {
+  <p>Loading messages...</p>
+} @else if (errorMessage()) {
+  <p class="admin-error-msg">{{ errorMessage() }}</p>
+} @else {
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Subject</th>
+          <th>Received</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (msg of messages(); track msg.id) {
+          <tr class="msg-row" (click)="toggleExpand(msg.id)">
+            <td class="name">{{ msg.name }}</td>
+            <td>{{ msg.email }}</td>
+            <td>{{ msg.subject }}</td>
+            <td>{{ msg.createdAt | date: 'MMM d, y' }}</td>
+            <td>
+              <span class="badge" [class]="msg.resolved ? 'ok' : 'out'">
+                {{ msg.resolved ? 'Resolved' : 'Pending' }}
+              </span>
+            </td>
+            <td class="row-actions">
+              @if (!msg.resolved) {
+                <a (click)="$event.stopPropagation(); markResolved(msg.id)">
+                  {{ resolvingId() === msg.id ? 'Saving...' : 'Mark Resolved' }}
+                </a>
+              }
+            </td>
+          </tr>
+          @if (expandedId() === msg.id) {
+            <tr class="msg-detail-row">
+              <td colspan="6">
+                <div class="msg-detail">{{ msg.message }}</div>
+              </td>
+            </tr>
+          }
+        } @empty {
+          <tr><td colspan="6" class="sub">No messages yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

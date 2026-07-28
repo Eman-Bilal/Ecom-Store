@@ -127,9 +127,26 @@
   text-transform: capitalize;
 }
 
-.badge.delivered { background: rgba(47,75,60,0.12); color: var(--moss); }
-.badge.shipped { background: rgba(169,129,47,0.15); color: var(--brass); }
-.badge.pending { background: rgba(179,67,45,0.1); color: #B3432D; }
+.badge.delivered { 
+  background: rgba(47,75,60,0.12); 
+  color: var(--moss); 
+}
+.badge.shipped { 
+  background: rgba(169,129,47,0.15); 
+  color: var(--brass); 
+}
+.badge.pending { 
+  background: rgba(179,67,45,0.1); 
+  color: #B3432D; 
+}
+.badge.processing { 
+  background: rgba(169,129,47,0.15); 
+  color: var(--brass); 
+}
+.badge.cancelled { 
+  background: rgba(179,67,45,0.1); 
+  color: #B3432D; 
+}
 
 @media (max-width: 900px) {
   .kpi-row { grid-template-columns: repeat(2, 1fr); }
