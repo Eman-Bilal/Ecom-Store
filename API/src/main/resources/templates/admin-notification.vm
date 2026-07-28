@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title></title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, Helvetica, sans-serif;">
+<table width="100%" style="background-color: #f4f4f4; padding: 30px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+
+                <!-- Header -->
+                <tr>
+                    <td style="background-color: #1a1a2e; padding: 20px 30px;" align="left">
+                        <img src="cid:logoImage" alt="EcomStore" width="140" style="display: block;" />
+                    </td>
+                </tr>
+
+                <!-- Badge -->
+                <tr>
+                    <td style="padding: 25px 30px 0 30px;">
+              <span style="display: inline-block; background-color: #e8f0fe; color: #1a1a2e; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; padding: 4px 10px; border-radius: 12px; text-transform: uppercase;">
+                Admin Notification
+              </span>
+                    </td>
+                </tr>
+
+                <!-- Subject -->
+                <tr>
+                    <td style="padding: 15px 30px 5px 30px;">
+                        <h2 style="margin: 0; color: #1a1a2e; font-size: 20px;">$subject</h2>
+                    </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                    <td style="padding: 10px 30px 30px 30px;">
+                        <p style="margin: 0; color: #444444; font-size: 14px; line-height: 1.6; white-space: pre-line;">$body</p>
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <hr style="border: none; border-top: 1px solid #eeeeee; margin: 0;" />
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="padding: 20px 30px 25px 30px;">
+                        <p style="margin: 0; color: #999999; font-size: 12px;">
+                            This is an automated notification from your EcomStore admin system.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

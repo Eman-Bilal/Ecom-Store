@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<body style="font-family: Arial, sans-serif; color: #aff382;">
+<img src="cid:logo" alt="EcomStore" width="150" />
+
+<h2>Hi, $firstName + $lastName!</h2>
+
+<p>Here are your order details:</p>
+<table style="border-collapse: collapse; width: 100%;">
+    <tr><td><strong>Order Number:</strong></td><td>$orderNumber</td></tr>
+    <tr><td><strong>Status:</strong></td><td>$status</td></tr>
+    <tr><td><strong>Total:</strong></td><td>Rs. $totalAmount</td></tr>
+</table>
+
+<p>Your order $orderNumber status has been updated to $status.</p>
+</body>
+</html>
