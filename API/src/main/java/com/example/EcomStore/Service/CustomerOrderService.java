@@ -94,26 +94,17 @@ public class CustomerOrderService {
     orderItemsList.forEach(item -> item.setOrder(savedOrder));
     orderItemsRepository.saveAll(orderItemsList);
 
-    emailService.sendAdminNotification(
-        "New Order Placed: " + savedOrder.getOrderNumber(),
-        "A new order was placed by " + savedOrder.getFirstName() + " " + savedOrder.getLastName()
-            + " (" + savedOrder.getEmail() + ").\n"
-            + "Order Number: " + savedOrder.getOrderNumber() + "\n"
-            + "Status: " + savedOrder.getOrderStatus().name() + "\n"
-            + "Total: Rs. " + savedOrder.getTotalAmount()
+    emailService.sendOrderConfirmation(
+        savedOrder.getEmail(),
+        savedOrder.getFirstName(),
+        savedOrder.getLastName(),
+        savedOrder.getOrderNumber(),
+        savedOrder.getOrderStatus().name(),
+        savedOrder.getTotalAmount()
     );
 
-    emailService.sendEmail(savedOrder.getEmail(),
-        "Order Confirmation: " + savedOrder.getOrderNumber(),
-        "Hi " + savedOrder.getFirstName() + ",\n\n"
-            + "Thank you for your order! Here are your order details:\n"
-            + "Order Number: " + savedOrder.getOrderNumber() + "\n"
-            + "Status: " + savedOrder.getOrderStatus().name() + "\n"
-            + "Total: Rs. " + savedOrder.getTotalAmount() + "\n\n"
-            + "You can track your order anytime using your order number and email.\n\n"
-            + "Thank you for shopping with us!"
-    );
-
+    emailService.sendAdminNotification("New order received", "Order id: "+ savedOrder.getId() + " placed by : "
+        );
     airtableService.syncOrder(savedOrder, orderItemsList);
     return savedOrder;
   }
@@ -151,9 +142,12 @@ public class CustomerOrderService {
     order.setOrderStatus(newStatus);
     CustomerOrder saved = customerOrderRepository.save(order);
 
-    emailService.sendEmail(saved.getEmail(),
-        "Order " + saved.getOrderNumber() + " Update",
-        "Your order status has been updated to: " + newStatus.name());
+    emailService.sendOrderStatusUpdate(
+        saved.getEmail(),
+        saved.getFirstName(),
+        saved.getOrderNumber(),
+        newStatus.name()
+    );
 
     List<OrderItems> items = orderItemsRepository.findByOrder_Id(saved.getId());
     airtableService.syncOrder(saved, items);
@@ -180,9 +174,9 @@ public class CustomerOrderService {
     order.setOrderStatus(OrderStatus.CANCELLED);
     CustomerOrder saved = customerOrderRepository.save(order);
 
-    emailService.sendEmail(saved.getEmail(),
-        "Order " + saved.getOrderNumber() + " Cancelled",
-        "Your order has been cancelled. If you didn't request this, please contact us.");
+    emailService.sendOrderCancelled(saved.getEmail(),
+        saved.getFirstName(), saved.getOrderNumber()
+        );
 
     emailService.sendAdminNotification(
         "Order Cancelled: " + saved.getOrderNumber(),
