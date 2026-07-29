@@ -8,12 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.aspectj.apache.bcel.classfile.ClassParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -33,11 +31,6 @@ public class EmailService {
 
   @Value("${admin.notification.email}")
   private String adminEmail;
-
-//  @Async
-//  public void sendAdminNotification(String subject, String body) {
-//    sendEmail(adminEmail, subject, body);
-//  }
 
   @Async
   public void sendEmail(String to, String subject, String body) {
@@ -63,7 +56,7 @@ public class EmailService {
       helper.setSubject(subject);
       helper.setText(htmlBody,true);
 
-      ClassPathResource logo= new ClassPathResource("static/images/logo.jpg");
+      ClassPathResource logo= new ClassPathResource("static/images/products/logo.jpg");
       helper.addInline("logoImage", logo);
 
       mailSender.send(message);

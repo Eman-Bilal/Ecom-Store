@@ -20,6 +20,20 @@ public class FileStorageService {
   private String uploadDir;
 
   public String storeFile(MultipartFile file) {
+
+    if (file == null || file.isEmpty()) {
+      throw new IllegalArgumentException("Image file is empty.");
+    }
+
+    String contentType = file.getContentType();
+
+    if (contentType == null ||
+        !(contentType.equals("image/jpeg")
+            || contentType.equals("image/png")
+            || contentType.equals("image/webp"))) {
+
+      throw new IllegalArgumentException("Only JPG, PNG and WEBP images are allowed.");
+    }
     try {
       Path uploadPath = Paths.get(uploadDir);
       if (!Files.exists(uploadPath)) {
@@ -35,7 +49,8 @@ public class FileStorageService {
       Path targetPath = uploadPath.resolve(uniqueFilename);
       Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-      return "/images/products/" + uniqueFilename;
+      return uploadDir + "/" + uniqueFilename;
+
     } catch (IOException e) {
       log.error("Failed to store file: {}", e.getMessage());
       throw new RuntimeException("Failed to store file", e);
