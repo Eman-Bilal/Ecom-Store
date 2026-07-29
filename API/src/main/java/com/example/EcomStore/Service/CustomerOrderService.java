@@ -1,6 +1,8 @@
 package com.example.EcomStore.Service;
 
 import com.example.EcomStore.Dto.CreateOrderRequest;
+import com.example.EcomStore.Dto.OrderInvoiceDto;
+import com.example.EcomStore.Dto.OrderItemDetailDto;
 import com.example.EcomStore.Dto.OrderItemRequest;
 import com.example.EcomStore.Entities.*;
 import com.example.EcomStore.Exception.InsufficientStockException;
@@ -106,6 +108,7 @@ public class CustomerOrderService {
     emailService.sendAdminNotification("New order received", "Order id: "+ savedOrder.getId() + " placed by : "
         );
     airtableService.syncOrder(savedOrder, orderItemsList);
+    buildInvoice(savedOrder);
     return savedOrder;
   }
 
@@ -194,5 +197,30 @@ public class CustomerOrderService {
   @Transactional
   public CustomerOrder cancelOrderByCustomer(String orderNumber, String email) {
     return cancelOrder(getByOrderNumberAndEmail(orderNumber, email));
+  }
+
+  public OrderInvoiceDto buildInvoice(CustomerOrder order) {
+    List<OrderItems> items = orderItemsRepository.findByOrder_Id(order.getId());
+
+    List<OrderItemDetailDto> itemDtos = items.stream()
+        .map(i -> new OrderItemDetailDto(
+            i.getProductName(), i.getQuantity(), i.getUnitPrice(), i.getLineTotal()))
+        .toList();
+
+    return new OrderInvoiceDto(
+        order.getOrderNumber(),
+        order.getFirstName() + " " + order.getLastName(),
+        order.getEmail(),
+        order.getPhone(),
+        order.getShippingAddress(),
+        order.getCity(),
+        order.getPostalCode(),
+        order.getOrderStatus(),
+        itemDtos,
+        order.getSubtotal(),
+        order.getShippingFee(),
+        order.getTotalAmount(),
+        order.getCreatedAt()
+    );
   }
 }
