@@ -271,3 +271,12 @@
   font-size: 11px;
   margin: -8px 0 12px;
 }
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+}

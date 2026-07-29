@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ContactService } from '../../services/contact';
-import { ToastService } from '../../services/toast';
 
 @Component({
   selector: 'app-contact',
@@ -11,7 +10,6 @@ import { ToastService } from '../../services/toast';
 })
 export class Contact {
   private contactService = inject(ContactService);
-  private toastService = inject(ToastService);
 
   name = '';
   email = '';
@@ -20,6 +18,7 @@ export class Contact {
 
   submitting = signal(false);
   errorMessage = signal('');
+  showToast = signal(false);
 
   onSubmit() {
     if (!this.name || !this.email || !this.subject || !this.message) {
@@ -40,11 +39,12 @@ export class Contact {
       .subscribe({
         next: () => {
           this.submitting.set(false);
-          this.toastService.show('Message sent successfully!', 'success');
-          this.name = '';
-          this.email = '';
-          this.subject = '';
-          this.message = '';
+          this.showToast.set(true);
+          this.resetFields();
+
+          setTimeout(() => {
+            this.showToast.set(false);
+          }, 3000);
         },
         error: (err) => {
           this.submitting.set(false);
@@ -52,5 +52,12 @@ export class Contact {
           console.error(err);
         },
       });
+  }
+
+  resetFields() {
+    this.name = '';
+    this.email = '';
+    this.subject = '';
+    this.message = '';
   }
 }

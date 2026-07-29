@@ -3,16 +3,19 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { FormsModule } from '@angular/forms';
 import { AppModeService } from '../../services/app-mode';
 import { AuthService } from '../../services/auth';
+import { CartService } from '../../services/cart';
 import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-customer-layout',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, FormsModule , NgClass],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, FormsModule, NgClass],
   templateUrl: './customer-layout.html',
   styleUrl: './customer-layout.css',
 })
 export class CustomerLayout {
-  cartCount = 2;
+  private cartService = inject(CartService);
+  cartCount = this.cartService.totalCount; // signal from CartService
+
   appMode = inject(AppModeService);
   authService = inject(AuthService);
   router = inject(Router);

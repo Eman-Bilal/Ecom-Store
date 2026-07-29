@@ -159,3 +159,38 @@
   width: 72px;
   text-align: center;
 }
+/* Product table thumbnail */
+.thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+/* Image preview inside the Add/Edit form */
+.image-preview {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  margin-top: 10px;
+}
+
+/* Small helper text under the file input */
+.field-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+/* Validation error text (e.g. wrong image format) */
+.field-error {
+  color: #B3432D;
+  font-size: 12px;
+  margin: 6px 0 0;
+}

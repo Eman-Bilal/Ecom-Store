@@ -13,6 +13,7 @@ export interface Product {
   status: 'IN_STOCK' | 'OUT_OF_STOCK';
   active: boolean;
   category: Category;
+  imageUrl: string | null;
 }
 
 export interface ProductFormData {
@@ -52,6 +53,12 @@ export class ProductService {
   // Reactivates a previously deactivated product (sets active = true)
   reactivateProduct(id: string): Observable<Product> {
     return this.http.patch<Product>(`${this.baseUrl}/${id}`, {});
+  }
+
+  uploadImage(id: string, file: File): Observable<Product> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<Product>(`${this.baseUrl}/${id}/image`, formData);
   }
 
   searchProducts(filters: {

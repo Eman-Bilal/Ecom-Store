@@ -29,3 +29,17 @@
     </button>
   </div>
 </div>
+
+@if (showToast()){
+  <div class="toast">
+    <div class="toast-icon">
+      ✓
+    </div>
+
+    <div class="toast-content">
+      <span class="toast-message">
+        Message sent successfully!
+      </span>
+    </div>
+</div>
+}

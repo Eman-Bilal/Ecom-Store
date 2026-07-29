@@ -1,20 +1,31 @@
-
-
 <div class="shop-toolbar">
   <div class="tabs"><a class="active">Newest Arrivals</a><a>Price high to low</a><a>Most popular</a></div>
-  <div class="per-page">{{ products.length }} results</div>
+  <div class="per-page">{{ products().length }} results</div>
 </div>
 
-<div class="shop-grid">
-  @for (product of products; track product.id) {
-    <div class="product-card">
-      <a [routerLink]="['/product', product.id]"><div class="product-photo"></div></a>
-      <div class="cat">{{ product.category }}</div>
-      <div class="name">{{ product.name }}</div>
-      <div class="price">{{ product.price }}</div>
-      <div class="add-line"><a [routerLink]="['/product', product.id]">View details</a></div>
-    </div>
-  }
-</div>
+@if (loading()) {
+  <p>Loading products...</p>
+} @else if (errorMessage()) {
+  <p class="error">{{ errorMessage() }}</p>
+} @else if (products().length === 0) {
+  <p>No products found.</p>
+} @else {
+  <div class="shop-grid">
+    @for (product of products(); track product.id) {
+      <div class="product-card">
+        <a [routerLink]="['/product', product.id]">
+          <div class="product-photo">
+            <!-- TODO: swap for <img [src]="product.imageUrl"> once image serving is finalized -->
+            <div class="img-placeholder"></div>
+          </div>
+        </a>
+        <div class="cat">{{ product.category?.categoryName }}</div>
+        <div class="name">{{ product.name }}</div>
+        <div class="price">Rs. {{ product.price | number }}</div>
+        <div class="add-line"><a [routerLink]="['/product', product.id]">View details</a></div>
+      </div>
+    }
+  </div>
+}
 
 <div class="pagination"><a class="active">1</a><a>2</a><a>3</a><a>→</a></div>

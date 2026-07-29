@@ -47,19 +47,35 @@
     text-align: center; 
     margin-top: 6px; 
 }
+/* .toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--moss);
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toast-in 0.25s ease;
+}
 
-.success-box { 
-    background: var(--paper); 
-    border: 1px solid var(--moss); 
-    padding: 16px 18px; 
-    margin-bottom: 20px; 
+.toast-icon {
+  font-size: 14px;
 }
-.success-box h4 { 
-    font-size: 15px; 
-    color: var(--moss); 
-    margin-bottom: 4px; 
-}
-.success-box p { 
-    font-size: 13px; 
-    color: #5B564C; 
-}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} */

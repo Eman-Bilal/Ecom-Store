@@ -32,6 +32,13 @@ export class AdminProducts implements OnInit {
   formQuantityInStock: number | null = null;
   formCategoryId: number | null = null;
 
+   // Image upload state
+  selectedImageFile: File | null = null;
+  imagePreviewUrl: string | null = null;
+  imageError = signal('');
+  private readonly allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg']
+ 
+
   ngOnInit() {
     this.fetchProducts();
     this.fetchCategories();
@@ -93,6 +100,24 @@ export class AdminProducts implements OnInit {
     return 'ok';
   }
 
+  onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+ 
+    const file = input.files[0];
+    this.imageError.set('');
+ 
+    if (!this.allowedImageTypes.includes(file.type)) {
+      this.imageError.set('Only JPG, JPEG, and PNG image formats are allowed.');
+      input.value = ''; // clear the invalid selection
+      this.selectedImageFile = null;
+      return;
+    }
+ 
+    this.selectedImageFile = file;
+    this.imagePreviewUrl = URL.createObjectURL(file);
+  }
+
   openAddForm() {
     this.editingProduct.set(null);
     this.formName = '';
@@ -101,8 +126,11 @@ export class AdminProducts implements OnInit {
     this.formQuantityInStock = null;
     const cats = this.categories();
     this.formCategoryId = cats.length ? cats[0].id : null;
-    this.formError.set('');
     this.showForm.set(true);
+    this.imageError.set('');
+    this.selectedImageFile = null;
+    this.imagePreviewUrl = null;
+    this.formError.set('');
   }
 
   openEditForm(product: Product) {
@@ -113,6 +141,9 @@ export class AdminProducts implements OnInit {
     this.formQuantityInStock = product.quantityInStock;
     this.formCategoryId = product.category?.id ?? null;
     this.formError.set('');
+     this.imageError.set('');
+    this.selectedImageFile = null;
+    this.imagePreviewUrl = product.imageUrl; // show existing image, if any
     this.showForm.set(true);
   }
 
@@ -167,6 +198,38 @@ export class AdminProducts implements OnInit {
       });
     }
   }
+
+    private afterSave(product: Product, isNew = false) {
+    if (!this.selectedImageFile) {
+      this.submitting.set(false);
+      this.showForm.set(false);
+      this.products.update((list) =>
+        isNew ? [...list, product] : list.map((p) => (p.id === product.id ? product : p))
+      );
+      return;
+    }
+ 
+    this.productService.uploadImage(product.id, this.selectedImageFile).subscribe({
+      next: (withImage) => {
+        this.submitting.set(false);
+        this.showForm.set(false);
+        this.products.update((list) =>
+          isNew ? [...list, withImage] : list.map((p) => (p.id === withImage.id ? withImage : p))
+        );
+      },
+      error: (err) => {
+        this.submitting.set(false);
+        // Product itself was saved successfully; only the image failed.
+        this.formError.set('Product saved, but the image could not be uploaded.');
+        console.error(err);
+        this.showForm.set(false);
+        this.products.update((list) =>
+          isNew ? [...list, product] : list.map((p) => (p.id === product.id ? product : p))
+        );
+      },
+    });
+  }
+ 
 
   toggleStatus(product: Product) {
     if (product.active) {

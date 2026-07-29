@@ -6,8 +6,8 @@
     <button class="btn-brass" [routerLink]="['/shop']">Shop Now</button>
   </div>
   <div class="hero-panel">
-  <img src="/watch1.jpeg" alt="Meridian Classic Automatic watch" class="hero-img" />
-</div>
+    <img src="/watch1.jpeg" alt="Meridian Classic Automatic watch" class="hero-img" />
+  </div>
 </section>
 
 <div class="product-row">
@@ -15,21 +15,30 @@
     <h2>New Arrivals</h2>
     <a class="btn-outline-dark" [routerLink]="['/shop']">View all</a>
   </div>
-   <div class="product-grid">
-    @for (product of newArrivals; track product.id) {
-      <div class="product-card">
-        <a [routerLink]="['/product', product.id]">
-          <div class="product-photo">
-            <img [src]="product.imageUrl" [alt]="product.name" class="product-img" />
-          </div>
-        </a>
-        <div class="cat">{{ product.category }}</div>
-        <div class="name">{{ product.name }}</div>
-        <div class="price">{{ product.price }}</div>
-      </div>
-    }
-  </div>
- 
+
+  @if (loading()) {
+    <p>Loading products...</p>
+  } @else if (errorMessage()) {
+    <p class="error">{{ errorMessage() }}</p>
+  } @else if (newArrivals().length === 0) {
+    <p>No products available yet.</p>
+  } @else {
+    <div class="product-grid">
+      @for (product of newArrivals(); track product.id) {
+        <div class="product-card">
+          <a [routerLink]="['/product', product.id]">
+            <div class="product-photo">
+              <!-- TODO: swap for <img [src]="product.imageUrl"> once image serving is finalized -->
+              <div class="img-placeholder"></div>
+            </div>
+          </a>
+          <div class="cat">{{ product.category?.categoryName }}</div>
+          <div class="name">{{ product.name }}</div>
+          <div class="price">Rs. {{ product.price | number }}</div>
+        </div>
+      }
+    </div>
+  }
 </div>
 
 <div class="feature-strip">
