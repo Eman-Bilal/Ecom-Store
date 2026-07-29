@@ -1,6 +1,7 @@
 package com.example.EcomStore.Controller;
 
 import com.example.EcomStore.Dto.AdminResponse;
+import com.example.EcomStore.Dto.OrderInvoiceDto;
 import com.example.EcomStore.Dto.RegisterRequest;
 import com.example.EcomStore.Entities.Admin;
 import com.example.EcomStore.Entities.CustomerOrder;
@@ -44,5 +45,12 @@ public class AdminController {
   @PatchMapping("{id}/status")
   public ResponseEntity<CustomerOrder> updateStatus(@PathVariable String id, @RequestParam OrderStatus status){
     return ResponseEntity.ok(customerOrderService.updateOrderStatus(id, status));
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @GetMapping("/{id}/invoice")
+  public ResponseEntity<OrderInvoiceDto> getInvoiceById(@PathVariable String id) {
+    CustomerOrder order = customerOrderService.getById(id);
+    return ResponseEntity.ok(customerOrderService.buildInvoice(order));
   }
 }

@@ -1,6 +1,7 @@
 package com.example.EcomStore.Controller;
 
 import com.example.EcomStore.Dto.CreateOrderRequest;
+import com.example.EcomStore.Dto.OrderInvoiceDto;
 import com.example.EcomStore.Entities.CustomerOrder;
 import com.example.EcomStore.Entities.OrderStatus;
 import com.example.EcomStore.Exception.ResourceNotFoundException;
@@ -27,9 +28,10 @@ public class CustomerOrderController {
   }
 
   @PostMapping("/checkout")
-  public ResponseEntity<CustomerOrder> checkout(@Valid @RequestBody CreateOrderRequest request) {
+  public ResponseEntity<OrderInvoiceDto> checkout(@Valid @RequestBody CreateOrderRequest request) {
     CustomerOrder savedOrder = customerOrderService.createOrder(request);
-    return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
+    OrderInvoiceDto invoice = customerOrderService.buildInvoice(savedOrder);
+    return ResponseEntity.status(HttpStatus.CREATED).body(invoice);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
@@ -79,5 +81,13 @@ public class CustomerOrderController {
   @PatchMapping("/{id}/cancel")
   public ResponseEntity<CustomerOrder> cancelByAdmin(@PathVariable String id) {
     return ResponseEntity.ok(customerOrderService.cancelOrderById(id));
+  }
+
+  @GetMapping("/track/invoice")
+  public ResponseEntity<OrderInvoiceDto> trackInvoice(
+      @RequestParam String orderNumber,
+      @RequestParam String email) {
+    CustomerOrder order = customerOrderService.getByOrderNumberAndEmail(orderNumber, email);
+    return ResponseEntity.ok(customerOrderService.buildInvoice(order));
   }
 }
