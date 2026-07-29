@@ -1,94 +1,93 @@
-<nav class="nav">
-  <a [routerLink]="['/']" class="wordmark">
-    DialEra
-  </a>
+<div class="page-wrapper">
+  <nav class="nav">
+    <a [routerLink]="['/']" class="wordmark">DialEra</a>
 
-  @if (router.url !== '/') {
-    <button class="back-home-btn" (click)="goHome()">← Back to Home</button>
-  }
+    @if (router.url !== '/') {
+      <button class="back-home-btn" (click)="goHome()">← Back to Home</button>
+    }
 
-  <div class="nav-links">
-    <a [routerLink]="['/']" routerLinkActive="current" [routerLinkActiveOptions]="{exact: true}">Home</a>
-    <a [routerLink]="['/about']" routerLinkActive="current">About</a>
-    <a [routerLink]="['/shop']" routerLinkActive="current">Shop</a>
-    <a [routerLink]="['/contact']" routerLinkActive="current">Contact</a>
-  </div>
+    <div class="nav-links">
+      <a [routerLink]="['/']" routerLinkActive="current" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a [routerLink]="['/about']" routerLinkActive="current">About</a>
+      <a [routerLink]="['/shop']" routerLinkActive="current">Shop</a>
+      <a [routerLink]="['/contact']" routerLinkActive="current">Contact</a>
+    </div>
 
-  <div class="nav-icons">
-    <a [routerLink]="['/cart']">Cart <span class="cart-badge">{{ cartCount }}</span></a>
+    <div class="nav-icons">
+      <a [routerLink]="['/cart']">Cart <span class="cart-badge">{{ cartCount() }}</span></a>
 
-    <div class="mode-switch">
-      <button class="mode-btn" (click)="openAdminLogin()">Admin</button>
+      <div class="mode-switch">
+        <button class="mode-btn" (click)="openAdminLogin()">Admin</button>
 
-      @if (showAdminPrompt) {
-        <div class="admin-popover" [class.is-logging-in]="loggingIn">
-          <div class="popover-header">
-            <span class="popover-title">Admin Login</span>
-          </div>
+        @if (showAdminPrompt) {
+          <div class="admin-popover" [class.is-logging-in]="loggingIn">
+            <div class="popover-header">
+              <span class="popover-title">Admin Login</span>
+            </div>
 
-          <label class="field-label">Admin email</label>
-          <input
-            class="field"
-            type="email"
-            [(ngModel)]="adminEmail"
-            #emailModel="ngModel"
-            email
-            placeholder="Enter your email"
-            [disabled]="loggingIn"
-          />
-          @if (emailModel.invalid && emailModel.touched) {
-            <p class="field-hint-error">Please enter a valid email address.</p>
-          }
-
-          <label class="field-label">Admin password</label>
-          <div class="password-field-wrap">
+            <label class="field-label">Admin email</label>
             <input
               class="field"
-              [type]="showPassword ? 'text' : 'password'"
-              [(ngModel)]="adminPassword"
-              placeholder="••••••••"
+              type="email"
+              [(ngModel)]="adminEmail"
+              #emailModel="ngModel"
+              email
+              placeholder="Enter your email"
               [disabled]="loggingIn"
             />
-            <button
-              type="button"
-              class="password-toggle-btn"
-              (click)="togglePasswordVisibility()"
-              [disabled]="loggingIn"
-            >
-              <i class="fa" [ngClass]="{ 'fa-eye-slash': !showPassword, 'fa-eye': showPassword }"></i>
-            </button>
-          </div>
-
-          <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()" [disabled]="loggingIn">
-            @if (loggingIn) {
-              <!-- <span class="spinner"></span>  -->
-              Logging in...
-            } @else {
-              Enter admin panel
+            @if (emailModel.invalid && emailModel.touched) {
+              <p class="field-hint-error">Please enter a valid email address.</p>
             }
-          </button>
 
-          @if (adminError) {
-            <p class="admin-error">{{ adminError }}</p>
-          }
-        </div>
-      }
+            <label class="field-label">Admin password</label>
+            <div class="password-field-wrap">
+              <input
+                class="field"
+                [type]="showPassword ? 'text' : 'password'"
+                [(ngModel)]="adminPassword"
+                placeholder="••••••••"
+                [disabled]="loggingIn"
+              />
+              <button
+                type="button"
+                class="password-toggle-btn"
+                (click)="togglePasswordVisibility()"
+                [disabled]="loggingIn"
+              >
+                <i class="fa" [ngClass]="{ 'fa-eye-slash': !showPassword, 'fa-eye': showPassword }"></i>
+              </button>
+            </div>
+
+            <button class="btn-brass" style="width:100%;" (click)="submitAdminLogin()" [disabled]="loggingIn">
+              @if (loggingIn) {
+                Logging in...
+              } @else {
+                Enter admin panel
+              }
+            </button>
+
+            @if (adminError) {
+              <p class="admin-error">{{ adminError }}</p>
+            }
+          </div>
+        }
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<router-outlet></router-outlet>
+  <main class="page-content">
+    <router-outlet></router-outlet>
+  </main>
 
-<div class="footer">
-  <div class="footer-row">
-    <div class="wordmark">DialEra</div>
-    <div class="footer-links-inline">
-      <a [routerLink]="['/shop']">Shop</a>
-      <a [routerLink]="['/cart']">Cart</a>
-      <a>Warranty</a>
-      <a>Privacy</a>
+  <div class="footer">
+    <div class="footer-row">
+      <div class="wordmark">DialEra</div>
+      <div class="footer-links-inline">
+        <a [routerLink]="['/shop']">Shop</a>
+        <a [routerLink]="['/cart']">Cart</a>
+      </div>
+      <div class="social-icons"><span><a href="https://www.instagram.com/dial._.era/">ig</a></span></div>
     </div>
-    <div class="social-icons"><span><a href="https://www.instagram.com/dial._.era/">ig</a></span></div>
+    <div class="footer-bottom-line">Copyright © 2026 DialEra. All rights reserved.</div>
   </div>
-  <div class="footer-bottom-line">Copyright © 2026 DialEra. All rights reserved.</div>
 </div>

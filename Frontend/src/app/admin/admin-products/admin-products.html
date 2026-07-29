@@ -25,6 +25,7 @@
     <table class="data-table">
       <thead>
         <tr>
+          <th>Image</th>
           <th>ID</th>
           <th>Product</th>
           <th>Category</th>
@@ -37,6 +38,13 @@
       <tbody>
         @for (product of products(); track product.id) {
           <tr>
+            <td>
+               @if (product.imageUrl) {
+                <img [src]="product.imageUrl" alt="{{ product.name }}" class="thumb" />
+              } @else {
+                <div class="thumb-placeholder">No image</div>
+              }
+            </td>
             <td class="id-cell">{{ product.id | slice: 0:8 }}...</td>
             <td class="name">{{ product.name }}</td>
             <td>{{ product.category?.categoryName || '—' }}</td>
@@ -95,6 +103,23 @@
           <option [value]="cat.id">{{ cat.categoryName }}</option>
         }
       </select>
+
+      
+      <label class="field-label">Product image</label>
+      <input
+        type="file"
+        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+        (change)="onImageSelected($event)"
+      />
+      <p class="field-hint">Only JPG, JPEG, and PNG formats are allowed.</p>
+ 
+      @if (imageError()) {
+        <p class="field-error">{{ imageError() }}</p>
+      }
+ 
+      @if (imagePreviewUrl) {
+        <img [src]="imagePreviewUrl" alt="Preview" class="image-preview" />
+      }
 
       <div class="modal-actions">
         <button class="btn-outline-dark" (click)="closeForm()">Cancel</button>

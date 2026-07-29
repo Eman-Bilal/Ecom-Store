@@ -1,25 +1,34 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: string;
-  imageUrl: string;
-}
+import { DecimalPipe } from '@angular/common';
+import { ProductService, Product } from '../../services/product';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, DecimalPipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
-  newArrivals: Product[] = [
-    { id: 1, name: 'Meridian Classic Automatic', category: "Men's — Automatic", price: 'Rs. 24,500' , imageUrl:'watch2.jpeg' },
-    { id: 2, name: 'Oakridge Chronograph', category: "Men's — Chronograph", price: 'Rs. 32,900' , imageUrl:'watch3.jpeg' },
-    { id: 3, name: 'Aria Mesh Watch', category: "Women's — Mesh", price: 'Rs. 19,800' , imageUrl:'watch4.jpeg' },
-    { id: 4, name: 'Terra Connect Smartwatch', category: 'Smart Watch', price: 'Rs. 28,200' , imageUrl:'watch5.jpeg' },
-  ];
+export class Home implements OnInit {
+  private productService = inject(ProductService);
+
+  newArrivals = signal<Product[]>([]);
+  loading = signal(true);
+  errorMessage = signal('');
+
+  ngOnInit() {
+    this.productService.getAllProducts().subscribe({
+      next: (data) => {
+        // Only show active products; most recently added first, capped at 4
+        const active = data.filter((p) => p.active);
+        this.newArrivals.set(active.slice(-4).reverse());
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.errorMessage.set('Could not load new arrivals.');
+        this.loading.set(false);
+        console.error(err);
+      },
+    });
+  }
 }

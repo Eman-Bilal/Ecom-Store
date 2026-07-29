@@ -21,6 +21,20 @@ export interface CustomerOrder {
   orderStatus: OrderStatus;
   createdAt: string;
 }
+export interface OrderItemRequest {
+  productId: string;
+  quantity: number;
+}
+export interface CreateOrderRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  shippingAddress: string;
+  city: string;
+  postalCode?: string;
+  items: OrderItemRequest[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -36,4 +50,7 @@ export class OrderService {
     const params = new HttpParams().set('status', status);
     return this.http.patch<CustomerOrder>(`${this.baseUrl}/${id}/status`, null, { params });
   }
+  createOrder(request: CreateOrderRequest): Observable<CustomerOrder> {
+  return this.http.post<CustomerOrder>(`${this.baseUrl}/checkout`, request);
+}
 }
