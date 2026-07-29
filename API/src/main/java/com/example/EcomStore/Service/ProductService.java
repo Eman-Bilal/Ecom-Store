@@ -1,5 +1,7 @@
 package com.example.EcomStore.Service;
 
+import com.example.EcomStore.Dto.ProductRequestDto;
+import com.example.EcomStore.Dto.ProductResponseDto;
 import com.example.EcomStore.Entities.Category;
 import com.example.EcomStore.Entities.Product;
 import com.example.EcomStore.Entities.ProductStatus;
@@ -10,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,8 +45,45 @@ public class ProductService {
     return productRepository.findByCategoryIdAndActiveTrue(categoryId);
   }
 
-  public List<Product> getAll() {
-    return productRepository.findAll();
+//  public List<Product> getAll() {
+//    return productRepository.findAll();
+//  }
+
+  public List<ProductResponseDto> getAll() {
+
+    return productRepository.findAll()
+        .stream()
+        .map(product -> {
+
+          byte[] image = null;
+
+          try {
+
+            if(product.getImageUrl() != null) {
+              image = Files.readAllBytes(
+                  Paths.get(product.getImageUrl())
+              );
+            }
+          }
+          catch (IOException e) {
+            throw new RuntimeException(
+                "Could not read image: " + product.getImageUrl(),
+                e
+            );
+          }
+
+
+          return new ProductResponseDto(
+              product.getId(),
+              product.getName(),
+              product.getDescription(),
+              product.getPrice(),
+              product.getQuantityInStock(),
+              image
+          );
+
+        })
+        .toList();
   }
 
   public Product getById(String id) {
@@ -113,13 +155,24 @@ public class ProductService {
     }
     return filtered;
   }
+  private final FileStorageService fileStorageService;
 
-  private final FileStorageService fileStorageService;   // add to constructor injection
+  public Product createProductWithImage(Long categoryId,
+                                        ProductRequestDto dto,
+                                        MultipartFile file) {
+    Product product = new Product();
 
-  public Product uploadProductImage(String id, MultipartFile file) {
-    Product product = getById(id);
-    String imageUrl = fileStorageService.storeFile(file);
-    product.setImageUrl(imageUrl);
-    return productRepository.save(product);
+    product.setName(dto.getName());
+    product.setDescription(dto.getDescription());
+    product.setPrice(dto.getPrice());
+    product.setQuantityInStock(dto.getQuantityInStock());
+
+    if (file != null && !file.isEmpty()) {
+      String imageUrl = fileStorageService.storeFile(file);
+      product.setImageUrl(imageUrl);
+    }
+
+    return createProduct(categoryId, product);
   }
+
 }
