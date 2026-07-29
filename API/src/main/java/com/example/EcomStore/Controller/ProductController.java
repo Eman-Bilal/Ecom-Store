@@ -1,10 +1,13 @@
 package com.example.EcomStore.Controller;
 
+import com.example.EcomStore.Dto.ProductRequestDto;
+import com.example.EcomStore.Dto.ProductResponseDto;
 import com.example.EcomStore.Entities.Product;
 import com.example.EcomStore.Service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +20,6 @@ import java.util.List;
 @RequestMapping("api/products")
 @RequiredArgsConstructor
 public class ProductController {
-
   private final ProductService productService;
 
   @PreAuthorize("hasRole('ADMIN')")
@@ -32,8 +34,13 @@ public class ProductController {
     return ResponseEntity.ok(productService.getByCategory(categoryId));
   }
 
+//  @GetMapping
+//  public ResponseEntity<List<Product>> getAll() {
+//    return ResponseEntity.ok(productService.getAll());
+//  }
+
   @GetMapping
-  public ResponseEntity<List<Product>> getAll() {
+  public ResponseEntity<List<ProductResponseDto>> getAll() {
     return ResponseEntity.ok(productService.getAll());
   }
 
@@ -73,11 +80,16 @@ public class ProductController {
     return ResponseEntity.ok(productService.searchProducts(name, minPrice, maxPrice, categoryId, sortBy));
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
-  @PostMapping("/{id}/image")
-  public ResponseEntity<Product> uploadImage(
-      @PathVariable String id,
-      @RequestParam("file") MultipartFile file) {
-    return ResponseEntity.ok(productService.uploadProductImage(id, file));
+  @PostMapping(
+      value = "/category/{categoryId}/image",
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+  )
+  public ResponseEntity<Product> createWithImage(
+      @PathVariable Long categoryId,
+      @RequestPart("product") ProductRequestDto product,
+      @RequestPart("file") MultipartFile file) {
+
+    Product saved = productService.createProductWithImage(categoryId, product, file);
+    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
 }
