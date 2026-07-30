@@ -19,19 +19,18 @@ public class FileStorageService {
   @Value("${app.upload.dir}")
   private String uploadDir;
 
-  public String storeFile(MultipartFile file) {
+  // simple holder so we return both pieces of info from one call
+  public record StoredFile(String path, String contentType) {}
 
+  public StoredFile storeFile(MultipartFile file) {
     if (file == null || file.isEmpty()) {
       throw new IllegalArgumentException("Image file is empty.");
     }
-
     String contentType = file.getContentType();
-
     if (contentType == null ||
         !(contentType.equals("image/jpeg")
             || contentType.equals("image/png")
             || contentType.equals("image/webp"))) {
-
       throw new IllegalArgumentException("Only JPG, PNG and WEBP images are allowed.");
     }
     try {
@@ -39,18 +38,14 @@ public class FileStorageService {
       if (!Files.exists(uploadPath)) {
         Files.createDirectories(uploadPath);
       }
-
       String originalFilename = file.getOriginalFilename();
       String extension = (originalFilename != null && originalFilename.contains("."))
           ? originalFilename.substring(originalFilename.lastIndexOf("."))
           : "";
       String uniqueFilename = UUID.randomUUID() + extension;
-
       Path targetPath = uploadPath.resolve(uniqueFilename);
       Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-      return uploadDir + "/" + uniqueFilename;
-
+      return new StoredFile(uploadDir + "/" + uniqueFilename, contentType);
     } catch (IOException e) {
       log.error("Failed to store file: {}", e.getMessage());
       throw new RuntimeException("Failed to store file", e);
