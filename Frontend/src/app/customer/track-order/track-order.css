@@ -1,0 +1,144 @@
+.track-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 50px 40px 60px;
+}
+
+.track-page h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  color: var(--moss);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.track-page > .sub {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Two-column layout: form on the left, result on the right */
+.track-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.track-form .field {
+  margin-bottom: 16px;
+}
+
+.track-placeholder {
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ===== Order result card ===== */
+.order-box {
+  background: var(--paper, #fff);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 28px 28px 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.order-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 16px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.order-number-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.order-number-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--moss);
+  margin: 0;
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.status-badge.pending {
+  background: #FFF3D6;
+  color: #8A6D1D;
+}
+
+.status-badge.processing {
+  background: #E1EEFF;
+  color: #2C5C9E;
+}
+
+.status-badge.shipped {
+  background: #E4E0FF;
+  color: #5B4CA8;
+}
+
+.status-badge.delivered {
+  background: #DDF3E4;
+  color: #1F7A44;
+}
+
+.status-badge.cancelled {
+  background: #FBE0E0;
+  color: #A3312F;
+}
+
+.section-label {
+  margin: 20px 0 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--moss);
+}
+
+.order-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 9px 0;
+  color: #4A5B4B;
+  border-bottom: 1px dashed var(--line);
+}
+
+.order-line.total {
+  font-weight: 700;
+  color: var(--moss);
+  font-size: 16px;
+  border-bottom: none;
+  padding-top: 16px;
+}
+
+.btn-full {
+  width: 100%;
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* Stack on smaller screens instead of squeezing side-by-side */
+@media (max-width: 720px) {
+  .track-grid {
+    grid-template-columns: 1fr;
+  }
+}

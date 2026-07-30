@@ -1,66 +1,88 @@
-<div class="checkout-grid">
-  <div class="checkout-form">
-    <h3>Billing Details</h3>
+@if (placedInvoice(); as invoice) {
+  <div class="order-success">
+    <h2>✓ Order placed successfully!</h2>
+    <p>Your order number is <strong>{{ invoice.orderNumber }}</strong>. A confirmation has been noted for {{ invoice.email }}.</p>
 
-    <div class="field-row">
-      <div>
-        <label class="field-label">First name</label>
-        <input class="field" [(ngModel)]="firstName" placeholder="Rameesha" />
-      </div>
-      <div>
-        <label class="field-label">Last name</label>
-        <input class="field" [(ngModel)]="lastName" placeholder="Shafiq" />
-      </div>
-    </div>
-
-    <label class="field-label">Email</label>
-    <input class="field" type="email" [(ngModel)]="email" placeholder="you@example.com" />
-
-    <label class="field-label">Phone</label>
-    <input class="field" [(ngModel)]="phone" placeholder="03XXXXXXXXX" />
-
-    <label class="field-label">Street address</label>
-    <input class="field" [(ngModel)]="shippingAddress" placeholder="House 12, Street 5" />
-
-    <div class="field-row">
-      <div>
-        <label class="field-label">City</label>
-        <input class="field" [(ngModel)]="city" placeholder="Lahore" />
-      </div>
-      <div>
-        <label class="field-label">Postal code</label>
-        <input class="field" [(ngModel)]="postalCode" placeholder="54000" />
-      </div>
-    </div>
-
-    @if (errorMessage) {
-      <p class="admin-error-msg">{{ errorMessage }}</p>
-    }
-  </div>
-
-  <div class="order-box">
-    <h3>Your Order</h3>
-
-    @for (item of cartItems(); track item.product.id) {
-      <div class="order-line">
-        <span>{{ item.product.name }} × {{ item.quantity }}</span>
-        <span>Rs. {{ (item.product.price * item.quantity) | number }}</span>
-      </div>
-    }
-
-    <div class="order-line"><span>Shipping — Flat rate</span><span>Rs. {{ shipping | number }}</span></div>
-    <div class="order-line total"><span>Total</span><span>Rs. {{ total | number }}</span></div>
-
-    <div class="pay-methods">
-      <div class="pay-method active"><span>Cash on delivery</span><span>●</span></div>
-    </div>
-
-    <button class="btn-brass btn-full" (click)="placeOrder()" [disabled]="submitting">
-      @if (submitting) {
-        Placing order...
-      } @else {
-        Place order
+    <div class="order-box">
+      <h3>Invoice Summary</h3>
+      @for (item of invoice.items; track item.productName) {
+        <div class="order-line">
+          <span>{{ item.productName }} × {{ item.quantity }}</span>
+          <span>Rs. {{ item.lineTotal | number }}</span>
+        </div>
       }
-    </button>
+      <div class="order-line"><span>Shipping</span><span>Rs. {{ invoice.shippingFee | number }}</span></div>
+      <div class="order-line total"><span>Total</span><span>Rs. {{ invoice.totalAmount | number }}</span></div>
+      <p class="sub">Status: {{ invoice.orderStatus }} · Placed on {{ invoice.placedAt | date: 'MMM d, y, h:mm a' }}</p>
+    </div>
+
+    <a [routerLink]="['/track-order']" class="btn-outline-dark" style="display:inline-block; margin-top:24px;">Track this order</a>
   </div>
-</div>
+} @else {
+  <div class="checkout-grid">
+    <div class="checkout-form">
+      <h3>Billing Details</h3>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">First name</label>
+          <input class="field" [(ngModel)]="firstName" placeholder="Rameesha" />
+        </div>
+        <div>
+          <label class="field-label">Last name</label>
+          <input class="field" [(ngModel)]="lastName" placeholder="Shafiq" />
+        </div>
+      </div>
+
+      <label class="field-label">Email</label>
+      <input class="field" type="email" [(ngModel)]="email" placeholder="you@example.com" />
+
+      <label class="field-label">Phone</label>
+      <input class="field" [(ngModel)]="phone" placeholder="03XXXXXXXXX" />
+
+      <label class="field-label">Street address</label>
+      <input class="field" [(ngModel)]="shippingAddress" placeholder="House 12, Street 5" />
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">City</label>
+          <input class="field" [(ngModel)]="city" placeholder="Lahore" />
+        </div>
+        <div>
+          <label class="field-label">Postal code</label>
+          <input class="field" [(ngModel)]="postalCode" placeholder="54000" />
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <p class="admin-error-msg">{{ errorMessage() }}</p>
+      }
+    </div>
+
+    <div class="order-box">
+      <h3>Your Order</h3>
+
+      @for (item of cartItems(); track item.product.id) {
+        <div class="order-line">
+          <span>{{ item.product.name }} × {{ item.quantity }}</span>
+          <span>Rs. {{ (item.product.price * item.quantity) | number }}</span>
+        </div>
+      }
+
+      <div class="order-line"><span>Shipping — Flat rate</span><span>Rs. {{ shipping | number }}</span></div>
+      <div class="order-line total"><span>Total</span><span>Rs. {{ total | number }}</span></div>
+
+      <div class="pay-methods">
+        <div class="pay-method active"><span>Cash on delivery</span><span>●</span></div>
+      </div>
+
+      <button class="btn-brass btn-full" (click)="placeOrder()" [disabled]="submitting()">
+        @if (submitting()) {
+          Placing order...
+        } @else {
+          Place order
+        }
+      </button>
+    </div>
+  </div>
+}

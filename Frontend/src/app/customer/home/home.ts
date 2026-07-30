@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
-import { ProductService, Product } from '../../services/product';
+import { ProductService, ProductResponse, getProductImageSrc } from '../../services/product';
 
 @Component({
   selector: 'app-home',
@@ -12,14 +12,13 @@ import { ProductService, Product } from '../../services/product';
 export class Home implements OnInit {
   private productService = inject(ProductService);
 
-  newArrivals = signal<Product[]>([]);
+  newArrivals = signal<ProductResponse[]>([]);
   loading = signal(true);
   errorMessage = signal('');
 
   ngOnInit() {
     this.productService.getAllProducts().subscribe({
       next: (data) => {
-        // Only show active products; most recently added first, capped at 4
         const active = data.filter((p) => p.active);
         this.newArrivals.set(active.slice(-4).reverse());
         this.loading.set(false);
@@ -30,5 +29,9 @@ export class Home implements OnInit {
         console.error(err);
       },
     });
+  }
+
+  imageSrc(product: ProductResponse): string | null {
+    return getProductImageSrc(product);
   }
 }

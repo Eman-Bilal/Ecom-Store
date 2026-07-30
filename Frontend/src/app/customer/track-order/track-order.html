@@ -1,0 +1,57 @@
+<div class="track-page">
+  <h2>Track your order</h2>
+  <p class="sub">Enter your order number and the email used at checkout.</p>
+
+  <div class="track-grid">
+    <div class="track-form">
+      <label class="field-label">Order number</label>
+      <input class="field" [(ngModel)]="trackOrderNumber" placeholder="e.g. ORD-1023" (keyup.enter)="trackOrder()" />
+
+      <label class="field-label">Email</label>
+      <input class="field" type="email" [(ngModel)]="trackEmail" placeholder="you@example.com" (keyup.enter)="trackOrder()" />
+
+      @if (trackError()) {
+        <p class="admin-error-msg">{{ trackError() }}</p>
+      }
+
+      <button class="btn-brass btn-full" (click)="trackOrder()" [disabled]="tracking()">
+        @if (tracking()) {
+          Checking...
+        } @else {
+          Track order
+        }
+      </button>
+    </div>
+
+    <div class="track-result-panel">
+      @if (trackResult(); as order) {
+        <div class="order-box">
+          <div class="order-box-header">
+            <div>
+              <p class="order-number-label">Order Number</p>
+              <h3 class="order-number-value">{{ order.orderNumber }}</h3>
+            </div>
+            <span class="status-badge" [class]="order.orderStatus.toLowerCase()">{{ order.orderStatus }}</span>
+          </div>
+
+          <div class="order-line"><span>Placed on</span><span>{{ order.createdAt | date: 'MMM d, y, h:mm a' }}</span></div>
+
+          <p class="sub section-label">Shipping to</p>
+          <div class="order-line"><span>Name</span><span>{{ order.firstName }} {{ order.lastName }}</span></div>
+          <div class="order-line"><span>Phone</span><span>{{ order.phone }}</span></div>
+          <div class="order-line"><span>Address</span><span>{{ order.shippingAddress }}</span></div>
+          <div class="order-line"><span>City</span><span>{{ order.city }}@if (order.postalCode) {, {{ order.postalCode }}}</span></div>
+
+          <p class="sub section-label">Payment</p>
+          <div class="order-line"><span>Subtotal</span><span>Rs. {{ order.subtotal | number }}</span></div>
+          <div class="order-line"><span>Shipping</span><span>Rs. {{ order.shippingFee | number }}</span></div>
+          <div class="order-line total"><span>Total</span><span>Rs. {{ order.totalAmount | number }}</span></div>
+        </div>
+      } @else {
+        <div class="track-placeholder">
+          <p>Your order details will appear here.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

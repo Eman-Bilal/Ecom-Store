@@ -18,11 +18,12 @@
           <th>Total</th>
           <th>Placed on</th>
           <th>Status</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         @for (order of orders(); track order.id) {
-          <tr>
+          <tr class="order-row" [class.expanded]="expandedOrderId() === order.id">
             <td class="name">{{ order.orderNumber }}</td>
             <td>{{ order.firstName }} {{ order.lastName }}</td>
             <td>{{ order.city }}</td>
@@ -40,9 +41,56 @@
                 }
               </select>
             </td>
+            <td>
+              <a (click)="toggleDetails(order)" class="details-toggle-btn">
+                {{ expandedOrderId() === order.id ? 'Hide details' : 'View details' }}
+              </a>
+            </td>
           </tr>
+
+          @if (expandedOrderId() === order.id) {
+            <tr class="detail-row">
+              <td colspan="7">
+                @if (loadingDetails()) {
+                  <p class="detail-loading">Loading details...</p>
+                } @else if (detailsError()) {
+                  <p class="admin-error-msg">{{ detailsError() }}</p>
+                } @else if (selectedOrder(); as invoice) {
+                  <div class="detail-panel">
+                    <div class="detail-columns">
+                      <div class="detail-col">
+                        <p class="section-label">Customer</p>
+                        <div class="order-line"><span>Name</span><span>{{ invoice.customerName }}</span></div>
+                        <div class="order-line"><span>Email</span><span>{{ invoice.email }}</span></div>
+                        <div class="order-line"><span>Phone</span><span>{{ invoice.phone }}</span></div>
+                        <div class="order-line"><span>Address</span><span>{{ invoice.shippingAddress }}, {{ invoice.city }}@if (invoice.postalCode) {, {{ invoice.postalCode }}}</span></div>
+                      </div>
+
+                      <div class="detail-col">
+                        <p class="section-label">Products</p>
+                        @for (item of invoice.items; track item.productName) {
+                          <div class="order-line">
+                            <span>{{ item.productName }} × {{ item.quantity }}</span>
+                            <span>Rs. {{ item.lineTotal | number }}</span>
+                          </div>
+                        }
+                      </div>
+
+                      <div class="detail-col">
+                        <p class="section-label">Payment</p>
+                        <div class="order-line"><span>Subtotal</span><span>Rs. {{ invoice.subtotal | number }}</span></div>
+                        <div class="order-line"><span>Shipping</span><span>Rs. {{ invoice.shippingFee | number }}</span></div>
+                        <div class="order-line total"><span>Total</span><span>Rs. {{ invoice.totalAmount | number }}</span></div>
+                        <p class="sub" style="margin-top: 10px;">Placed on {{ invoice.placedAt | date: 'MMM d, y, h:mm a' }}</p>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
         } @empty {
-          <tr><td colspan="6" class="sub">No orders yet.</td></tr>
+          <tr><td colspan="7" class="sub">No orders yet.</td></tr>
         }
       </tbody>
     </table>
