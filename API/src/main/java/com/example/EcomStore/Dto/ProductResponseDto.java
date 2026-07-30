@@ -16,6 +16,6 @@ public class ProductResponseDto {
   private String description;
   private BigDecimal price;
   private int quantityInStock;
-
   private byte[] image;
+  private String contentType;
 }
