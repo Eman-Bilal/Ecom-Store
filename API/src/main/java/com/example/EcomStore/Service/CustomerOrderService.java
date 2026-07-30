@@ -105,7 +105,7 @@ public class CustomerOrderService {
         savedOrder.getTotalAmount()
     );
 
-    emailService.sendAdminNotification("New order received", "Order id: "+ savedOrder.getId() + " placed by : "
+    emailService.sendAdminNotification("New order received", "<span>Order id: </span>"+ savedOrder.getId() + " placed by : "
         );
     airtableService.syncOrder(savedOrder, orderItemsList);
     buildInvoice(savedOrder);
@@ -191,12 +191,26 @@ public class CustomerOrderService {
 
   @Transactional
   public CustomerOrder cancelOrderById(String id) {
-    return cancelOrder(getById(id));
-  }
 
-  @Transactional
-  public CustomerOrder cancelOrderByCustomer(String orderNumber, String email) {
-    return cancelOrder(getByOrderNumberAndEmail(orderNumber, email));
+    CustomerOrder order = customerOrderRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+
+    if (order.getOrderStatus() == OrderStatus.DELIVERED || order.getOrderStatus() == OrderStatus.CANCELLED) {
+      throw new IllegalStateException("Order cannot be cancelled in its current status: " + order.getOrderStatus());
+    }
+
+    order.setOrderStatus(OrderStatus.CANCELLED);
+    CustomerOrder saved = customerOrderRepository.save(order);
+
+    emailService.sendAdminNotification("Order Cancelled",
+        "<p>An order was cancelled.</p>" +
+            "<p><strong>Order Number:</strong> " + order.getOrderNumber() + "<br>" +
+            "<strong>Customer:</strong> " + order.getFirstName() + " " + order.getLastName() + "<br>" +
+            "<strong>Total Amount:</strong> " + order.getTotalAmount() + "</p>");
+
+    emailService.sendOrderCancelled(order.getEmail(), order.getFirstName(), order.getOrderNumber());
+
+    return saved;
   }
 
   public OrderInvoiceDto buildInvoice(CustomerOrder order) {

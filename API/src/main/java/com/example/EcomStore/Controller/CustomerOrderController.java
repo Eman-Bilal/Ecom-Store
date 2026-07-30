@@ -68,14 +68,6 @@ public class CustomerOrderController {
     return ResponseEntity.ok(customerOrderService.updateOrderStatus(id, status));
   }
 
-  // Customer-facing
-  @PatchMapping("/cancel")
-  public ResponseEntity<CustomerOrder> cancelByCustomer(
-      @RequestParam String orderNumber,
-      @RequestParam String email) {
-    return ResponseEntity.ok(customerOrderService.cancelOrderByCustomer(orderNumber, email));
-  }
-
   // Admin-facing
   @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}/cancel")

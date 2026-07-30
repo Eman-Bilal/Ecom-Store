@@ -32,14 +32,14 @@ public class EmailService {
   @Value("${admin.notification.email}")
   private String adminEmail;
 
-  @Async
-  public void sendEmail(String to, String subject, String body) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(to);
-    message.setSubject(subject);
-    message.setText(body);
-    mailSender.send(message);
-  }
+//  @Async
+//  public void sendEmail(String to, String subject, String body) {
+//    SimpleMailMessage message = new SimpleMailMessage();
+//    message.setTo(to);
+//    message.setSubject(subject);
+//    message.setText(body);
+//    mailSender.send(message);
+//  }
 
   private String renderTemplate(String templateName, Map<String, Object> variables){
     VelocityContext context= new VelocityContext(variables);

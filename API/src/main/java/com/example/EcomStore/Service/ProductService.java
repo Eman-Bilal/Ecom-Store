@@ -58,15 +58,19 @@ public class ProductService {
     return createProduct(categoryId, product);
   }
 
-  // ---- Reads: all return ProductResponseDto with binary image ----
-
-  public List<ProductResponseDto> getAll() {
-    return productRepository.findByActiveTrue()   // was findAll() — fixed
+  public List<ProductResponseDto> getAllActive() {
+    return productRepository.findByActiveTrue()
         .stream()
         .map(this::toDto)
         .toList();
   }
 
+  public List<ProductResponseDto> getAll() {
+    return productRepository.findAll()
+        .stream()
+        .map(this::toDto)
+        .toList();
+  }
   public List<ProductResponseDto> getByCategory(Long categoryId) {
     categoryRepository.findByIdAndActiveTrue(categoryId)
         .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
@@ -125,7 +129,9 @@ public class ProductService {
         product.getPrice(),
         product.getQuantityInStock(),
         image,
-        product.getImageContentType()
+        product.getImageContentType(),
+        product.getCategory() != null ? product.getCategory().getCategoryName() : null,
+        product.isActive()
     );
   }
 
@@ -144,7 +150,7 @@ public class ProductService {
     }
     syncStatus(existing);
     emailService.sendAdminNotification("Product updated",
-        "A product was updated with id and name: " + id + ", " + updatedProduct.getName());
+        "<br>A product was updated with id and name: <span>" + id + " </span>, " + updatedProduct.getName());
     return productRepository.save(existing);
   }
 
@@ -161,7 +167,7 @@ public class ProductService {
     product.setActive(false);
     productRepository.save(product);
     emailService.sendAdminNotification("Product Deleted",
-        "A product with id and name: " + id + " ," + product.getName() + " was deleted");
+        "<br>A product with id and name: <span>" + id + "</span> ," + product.getName() + " was deleted");
   }
 
   public Product reactivateProduct(String id) {
@@ -169,7 +175,7 @@ public class ProductService {
         .orElseThrow(() -> new ResourceNotFoundException("Inactive product not found with id: " + id));
     product.setActive(true);
     emailService.sendAdminNotification("Product Reactivated",
-        "A product with id and name: " + id + " ," + product.getName() + " was reactivated");
+        "<br>A product with id and name: <span>" + id + "</span> ," + product.getName() + " was reactivated");
     return productRepository.save(product);
   }
 
@@ -179,7 +185,7 @@ public class ProductService {
     existing.setImageUrl(stored.path());
     existing.setImageContentType(stored.contentType());
     emailService.sendAdminNotification("Product image updated",
-        "Image updated for product with id: " + id);
+        "<br>Image updated for product with id: <span>" + id + " </span>");
     return productRepository.save(existing);
   }
 }
