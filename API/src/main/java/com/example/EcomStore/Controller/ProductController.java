@@ -22,32 +22,11 @@ import java.util.List;
 public class ProductController {
   private final ProductService productService;
 
-  @PreAuthorize("hasRole('ADMIN')")
-  @PostMapping("/{categoryId}")
-  public ResponseEntity<Product> create(@Valid @RequestBody Product product, @PathVariable long categoryId) {
-    Product saved = productService.createProduct(categoryId, product);
-    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-  }
-
-  @GetMapping("/category/{categoryId}")
-  public ResponseEntity<List<Product>> getByCategory(@PathVariable Long categoryId) {
-    return ResponseEntity.ok(productService.getByCategory(categoryId));
-  }
-
 //  @GetMapping
 //  public ResponseEntity<List<Product>> getAll() {
 //    return ResponseEntity.ok(productService.getAll());
 //  }
 
-  @GetMapping
-  public ResponseEntity<List<ProductResponseDto>> getAll() {
-    return ResponseEntity.ok(productService.getAll());
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<Product> getById(@PathVariable String id) {
-    return ResponseEntity.ok(productService.getById(id));
-  }
 
   @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{id}/{categoryId}")
@@ -70,8 +49,30 @@ public class ProductController {
     return ResponseEntity.ok(productService.reactivateProduct(id));
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
+  @PostMapping("/{categoryId}")
+  public ResponseEntity<Product> create(@Valid @RequestBody Product product, @PathVariable long categoryId) {
+    Product saved = productService.createProduct(categoryId, product);
+    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+  }
+
+  @GetMapping("/category/{categoryId}")
+  public ResponseEntity<List<ProductResponseDto>> getByCategory(@PathVariable Long categoryId) {
+    return ResponseEntity.ok(productService.getByCategory(categoryId));
+  }
+
+  @GetMapping
+  public ResponseEntity<List<ProductResponseDto>> getAll() {
+    return ResponseEntity.ok(productService.getAll());
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<ProductResponseDto> getById(@PathVariable String id) {
+    return ResponseEntity.ok(productService.getResponseById(id));
+  }
+
   @GetMapping("/search")
-  public ResponseEntity<List<Product>> search(
+  public ResponseEntity<List<ProductResponseDto>> search(
       @RequestParam(required = false) String name,
       @RequestParam(required = false) BigDecimal minPrice,
       @RequestParam(required = false) BigDecimal maxPrice,
@@ -80,16 +81,20 @@ public class ProductController {
     return ResponseEntity.ok(productService.searchProducts(name, minPrice, maxPrice, categoryId, sortBy));
   }
 
-  @PostMapping(
-      value = "/category/{categoryId}/image",
-      consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-  )
+  @PreAuthorize("hasRole('ADMIN')")
+  @PostMapping(value = "/category/{categoryId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Product> createWithImage(
       @PathVariable Long categoryId,
       @RequestPart("product") ProductRequestDto product,
       @RequestPart("file") MultipartFile file) {
-
     Product saved = productService.createProductWithImage(categoryId, product, file);
     return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PutMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Product> updateImage(@PathVariable String id, @RequestPart("file") MultipartFile file) {
+    return ResponseEntity.ok(productService.updateProductImage(id, file));
+  }
+
 }

@@ -9,6 +9,7 @@ import com.example.EcomStore.Exception.ResourceNotFoundException;
 import com.example.EcomStore.Repository.CategoryRepository;
 import com.example.EcomStore.Repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,11 +24,13 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ProductService {
 
   private final ProductRepository productRepository;
   private final CategoryRepository categoryRepository;
   private final EmailService emailService;
+  private final FileStorageService fileStorageService;
 
   public Product createProduct(long categoryId, Product product) {
     Category category = categoryRepository.findByIdAndActiveTrue(categoryId)
@@ -39,61 +42,95 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public List<Product> getByCategory(Long categoryId) {
-    categoryRepository.findByIdAndActiveTrue(categoryId)
-        .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
-    return productRepository.findByCategoryIdAndActiveTrue(categoryId);
+  public Product createProductWithImage(Long categoryId, ProductRequestDto dto, MultipartFile file) {
+    Product product = new Product();
+    product.setName(dto.getName());
+    product.setDescription(dto.getDescription());
+    product.setPrice(dto.getPrice());
+    product.setQuantityInStock(dto.getQuantityInStock());
+
+    if (file != null && !file.isEmpty()) {
+      FileStorageService.StoredFile stored = fileStorageService.storeFile(file);
+      product.setImageUrl(stored.path());
+      product.setImageContentType(stored.contentType());
+    }
+
+    return createProduct(categoryId, product);
   }
 
-//  public List<Product> getAll() {
-//    return productRepository.findAll();
-//  }
+  // ---- Reads: all return ProductResponseDto with binary image ----
 
   public List<ProductResponseDto> getAll() {
-
-    return productRepository.findAll()
+    return productRepository.findByActiveTrue()   // was findAll() — fixed
         .stream()
-        .map(product -> {
-
-          byte[] image = null;
-
-          try {
-
-            if(product.getImageUrl() != null) {
-              image = Files.readAllBytes(
-                  Paths.get(product.getImageUrl())
-              );
-            }
-          }
-          catch (IOException e) {
-            throw new RuntimeException(
-                "Could not read image: " + product.getImageUrl(),
-                e
-            );
-          }
-
-
-          return new ProductResponseDto(
-              product.getId(),
-              product.getName(),
-              product.getDescription(),
-              product.getPrice(),
-              product.getQuantityInStock(),
-              image
-          );
-
-        })
+        .map(this::toDto)
         .toList();
   }
 
+  public List<ProductResponseDto> getByCategory(Long categoryId) {
+    categoryRepository.findByIdAndActiveTrue(categoryId)
+        .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
+    return productRepository.findByCategoryIdAndActiveTrue(categoryId)
+        .stream()
+        .map(this::toDto)
+        .toList();
+  }
+
+  public ProductResponseDto getResponseById(String id) {
+    return toDto(getById(id));
+  }
+
+  public List<ProductResponseDto> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice,
+                                                 Long categoryId, String sortBy) {
+    List<Product> products = productRepository.findByActiveTrue();
+
+    List<Product> filtered = products.stream()
+        .filter(p -> name == null || p.getName().toLowerCase().contains(name.toLowerCase()))
+        .filter(p -> minPrice == null || p.getPrice().compareTo(minPrice) >= 0)
+        .filter(p -> maxPrice == null || p.getPrice().compareTo(maxPrice) <= 0)
+        .filter(p -> categoryId == null || p.getCategory().getId().equals(categoryId))
+        .collect(Collectors.toCollection(ArrayList::new));
+
+    if ("price_asc".equals(sortBy)) {
+      filtered.sort(Comparator.comparing(Product::getPrice));
+    } else if ("price_desc".equals(sortBy)) {
+      filtered.sort(Comparator.comparing(Product::getPrice).reversed());
+    } else if ("newest".equals(sortBy)) {
+      filtered.sort(Comparator.comparing(Product::getCreatedAt).reversed());
+    }
+
+    return filtered.stream().map(this::toDto).toList();
+  }
+
+  // Internal use only (update/delete/reactivate need the entity, not the DTO)
   public Product getById(String id) {
     return productRepository.findByIdAndActiveTrue(id)
         .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
   }
 
+  private ProductResponseDto toDto(Product product) {
+    byte[] image = null;
+    if (product.getImageUrl() != null) {
+      try {
+        image = Files.readAllBytes(Paths.get(product.getImageUrl()));
+      } catch (IOException e) {
+        log.warn("Could not read image for product {}: {}", product.getId(), e.getMessage());
+        // leave image null rather than failing the whole request
+      }
+    }
+    return new ProductResponseDto(
+        product.getId(),
+        product.getName(),
+        product.getDescription(),
+        product.getPrice(),
+        product.getQuantityInStock(),
+        image,
+        product.getImageContentType()
+    );
+  }
+
   public Product updateProduct(String id, Product updatedProduct, long newCategoryId) {
     Product existing = getById(id);
-
     existing.setName(updatedProduct.getName());
     existing.setDescription(updatedProduct.getDescription());
     existing.setPrice(updatedProduct.getPrice());
@@ -136,43 +173,13 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  public List<Product> searchProducts(String name, BigDecimal minPrice, BigDecimal maxPrice, Long categoryId, String sortBy) {
-    List<Product> products = productRepository.findByActiveTrue();
-
-    List<Product> filtered = products.stream()
-        .filter(p -> name == null || p.getName().toLowerCase().contains(name.toLowerCase()))
-        .filter(p -> minPrice == null || p.getPrice().compareTo(minPrice) >= 0)
-        .filter(p -> maxPrice == null || p.getPrice().compareTo(maxPrice) <= 0)
-        .filter(p -> categoryId == null || p.getCategory().getId().equals(categoryId))
-        .collect(Collectors.toCollection(ArrayList::new));
-
-    if ("price_asc".equals(sortBy)) {
-      filtered.sort(Comparator.comparing(Product::getPrice));
-    } else if ("price_desc".equals(sortBy)) {
-      filtered.sort(Comparator.comparing(Product::getPrice).reversed());
-    } else if ("newest".equals(sortBy)) {
-      filtered.sort(Comparator.comparing(Product::getCreatedAt).reversed());
-    }
-    return filtered;
+  public Product updateProductImage(String id, MultipartFile file) {
+    Product existing = getById(id);
+    FileStorageService.StoredFile stored = fileStorageService.storeFile(file);
+    existing.setImageUrl(stored.path());
+    existing.setImageContentType(stored.contentType());
+    emailService.sendAdminNotification("Product image updated",
+        "Image updated for product with id: " + id);
+    return productRepository.save(existing);
   }
-  private final FileStorageService fileStorageService;
-
-  public Product createProductWithImage(Long categoryId,
-                                        ProductRequestDto dto,
-                                        MultipartFile file) {
-    Product product = new Product();
-
-    product.setName(dto.getName());
-    product.setDescription(dto.getDescription());
-    product.setPrice(dto.getPrice());
-    product.setQuantityInStock(dto.getQuantityInStock());
-
-    if (file != null && !file.isEmpty()) {
-      String imageUrl = fileStorageService.storeFile(file);
-      product.setImageUrl(imageUrl);
-    }
-
-    return createProduct(categoryId, product);
-  }
-
 }

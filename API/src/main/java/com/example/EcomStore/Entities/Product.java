@@ -57,4 +57,6 @@ public class Product {
   private LocalDateTime updatedAt;
 
   private String imageUrl;
+
+  private String imageContentType;
 }
