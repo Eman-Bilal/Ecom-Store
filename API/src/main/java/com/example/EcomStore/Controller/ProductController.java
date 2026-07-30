@@ -22,10 +22,11 @@ import java.util.List;
 public class ProductController {
   private final ProductService productService;
 
-//  @GetMapping
-//  public ResponseEntity<List<Product>> getAll() {
-//    return ResponseEntity.ok(productService.getAll());
-//  }
+  @PreAuthorize("hasRole('ADMIN')")
+  @GetMapping("/getAll")
+  public ResponseEntity<List<ProductResponseDto>> getAll() {
+    return ResponseEntity.ok(productService.getAll());
+  }
 
 
   @PreAuthorize("hasRole('ADMIN')")
@@ -62,8 +63,8 @@ public class ProductController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ProductResponseDto>> getAll() {
-    return ResponseEntity.ok(productService.getAll());
+  public ResponseEntity<List<ProductResponseDto>> getAllActive() {
+    return ResponseEntity.ok(productService.getAllActive());
   }
 
   @GetMapping("/{id}")

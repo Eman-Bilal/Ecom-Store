@@ -18,4 +18,6 @@ public class ProductResponseDto {
   private int quantityInStock;
   private byte[] image;
   private String contentType;
+  private String categoryName;
+  private boolean active;
 }
