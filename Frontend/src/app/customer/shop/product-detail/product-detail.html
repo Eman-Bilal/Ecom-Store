@@ -5,11 +5,14 @@
 } @else if (product(); as p) {
   <div class="pd">
     <div class="pd-image">
-      <!-- TODO: swap for <img [src]="p.imageUrl"> once image serving is finalized -->
-      <div class="frame-corner"></div>
+      @if (imageSrc(p); as src) {
+        <img [src]="src" alt="{{ p.name }}" class="pd-img" />
+      } @else {
+        <div class="frame-corner"></div>
+      }
     </div>
     <div class="pd-body">
-      <div class="cat">{{ p.category?.categoryName }}</div>
+      <div class="cat">{{ p.categoryName }}</div>
       <h2>{{ p.name }}</h2>
       <div class="price-lg">Rs. {{ p.price | number }}</div>
       <p class="desc">{{ p.description }}</p>

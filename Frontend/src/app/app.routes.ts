@@ -14,6 +14,7 @@ import { adminModeGuard } from './guards/admin-mode-guard';
 import { Register } from './admin/register/register';
 import { AdminOrders } from './admin/admin-order-status/admin-order-status';
 import { AdminContact } from './admin/admin-contact/admin-contact';
+import { TrackOrder } from './customer/track-order/track-order';
 
 const routeConfig: Routes = [
   {
@@ -27,6 +28,7 @@ const routeConfig: Routes = [
       { path: 'checkout', component: Checkout },
       { path: 'about', component: About },
       { path: 'contact', component: Contact },
+      { path: 'track-order', component: TrackOrder },
     ],
   },
   {
@@ -39,6 +41,7 @@ const routeConfig: Routes = [
       { path: 'orders', component: AdminOrders },
       { path: 'contact-messages', component: AdminContact },
       { path: 'register', component: Register },
+
     ],
   },
 ];

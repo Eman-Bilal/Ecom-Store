@@ -11,9 +11,9 @@
       [(ngModel)]="searchName"
       (keyup.enter)="onSearch()"
     />
-    <button class="search-icon-btn" (click)="onSearch()">🔍</button>
+    <button class="search-icon-btn" type="button" (click)="onSearch()">🔍</button>
   </div>
-  <button class="btn-brass" (click)="openAddForm()">+ Add product</button>
+  <button class="btn-brass" type="button" (click)="openAddForm()">+ Add product</button>
 </div>
 
 @if (loading()) {
@@ -39,15 +39,15 @@
         @for (product of products(); track product.id) {
           <tr>
             <td>
-               @if (product.imageUrl) {
-                <img [src]="product.imageUrl" alt="{{ product.name }}" class="thumb" />
+              @if (product.image) {
+                <img [src]="getImageSrc(product)" alt="{{ product.name }}" class="thumb" />
               } @else {
                 <div class="thumb-placeholder">No image</div>
               }
             </td>
             <td class="id-cell">{{ product.id | slice: 0:8 }}...</td>
             <td class="name">{{ product.name }}</td>
-            <td>{{ product.category?.categoryName || '—' }}</td>
+            <td>{{ product.categoryName || '—' }}</td>
             <td>Rs. {{ product.price | number }}</td>
             <td>{{ product.quantityInStock }}</td>
             <td>
@@ -100,11 +100,10 @@
       <label class="field-label">Category</label>
       <select class="field" [(ngModel)]="formCategoryId">
         @for (cat of categories(); track cat.id) {
-          <option [value]="cat.id">{{ cat.categoryName }}</option>
+          <option [ngValue]="cat.id">{{ cat.categoryName }}</option>
         }
       </select>
 
-      
       <label class="field-label">Product image</label>
       <input
         type="file"
@@ -112,18 +111,18 @@
         (change)="onImageSelected($event)"
       />
       <p class="field-hint">Only JPG, JPEG, and PNG formats are allowed.</p>
- 
+
       @if (imageError()) {
         <p class="field-error">{{ imageError() }}</p>
       }
- 
+
       @if (imagePreviewUrl) {
         <img [src]="imagePreviewUrl" alt="Preview" class="image-preview" />
       }
 
       <div class="modal-actions">
-        <button class="btn-outline-dark" (click)="closeForm()">Cancel</button>
-        <button class="btn-brass" [disabled]="submitting()" (click)="submitForm()">
+        <button class="btn-outline-dark" type="button" (click)="closeForm()">Cancel</button>
+        <button class="btn-brass" type="button" [disabled]="submitting()" (click)="submitForm()">
           {{ submitting() ? 'Saving...' : (editingProduct() ? 'Save changes' : 'Add product') }}
         </button>
       </div>

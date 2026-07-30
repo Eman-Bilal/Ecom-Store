@@ -52,3 +52,58 @@
     text-align: center; 
     margin-top: 16px; 
 }
+/* ===== Order Success Section ===== */
+.order-success {
+  padding: 50px 40px 20px;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.order-success h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  color: var(--moss);
+  margin-bottom: 12px;
+}
+
+.order-success > p {
+  font-size: 14px;
+  color: #4A5B4B;
+  margin-bottom: 30px;
+}
+
+.order-success > p strong {
+  color: var(--moss);
+  letter-spacing: 0.03em;
+}
+
+.order-success .order-box {
+  text-align: left;
+}
+
+/* ===== Track Order Section ===== */
+.track-section {
+  max-width: 480px;
+  margin: 0 auto 60px;
+  padding: 0 40px;
+}
+
+.track-section h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.track-section .field {
+  margin-bottom: 16px;
+}
+
+.track-section .btn-brass {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.track-section .order-box {
+  text-align: left;
+}

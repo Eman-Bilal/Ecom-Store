@@ -5,6 +5,29 @@ import { environment } from '../../environments/environments';
 
 export type OrderStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 
+export interface OrderItemDetailDto {
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+
+export interface OrderInvoiceDto {
+  orderNumber: string;
+  customerName: string;
+  email: string;
+  phone: string;
+  shippingAddress: string;
+  city: string;
+  postalCode: string;
+  orderStatus: OrderStatus;
+  items: OrderItemDetailDto[];
+  subtotal: number;
+  shippingFee: number;
+  totalAmount: number;
+  placedAt: string;
+}
+
 export interface CustomerOrder {
   id: string;
   orderNumber: string;
@@ -21,10 +44,12 @@ export interface CustomerOrder {
   orderStatus: OrderStatus;
   createdAt: string;
 }
+
 export interface OrderItemRequest {
   productId: string;
   quantity: number;
 }
+
 export interface CreateOrderRequest {
   firstName: string;
   lastName: string;
@@ -50,7 +75,17 @@ export class OrderService {
     const params = new HttpParams().set('status', status);
     return this.http.patch<CustomerOrder>(`${this.baseUrl}/${id}/status`, null, { params });
   }
-  createOrder(request: CreateOrderRequest): Observable<CustomerOrder> {
-  return this.http.post<CustomerOrder>(`${this.baseUrl}/checkout`, request);
+
+  createOrder(request: CreateOrderRequest): Observable<OrderInvoiceDto> {
+    return this.http.post<OrderInvoiceDto>(`${this.baseUrl}/checkout`, request);
+  }
+
+  trackOrder(orderNumber: string, email: string): Observable<CustomerOrder> {
+    const params = new HttpParams().set('orderNumber', orderNumber).set('email', email);
+    return this.http.get<CustomerOrder>(`${this.baseUrl}/track`, { params });
+  }
+  getInvoiceByOrderNumberAndEmail(orderNumber: string, email: string): Observable<OrderInvoiceDto> {
+  const params = new HttpParams().set('orderNumber', orderNumber).set('email', email);
+  return this.http.get<OrderInvoiceDto>(`${this.baseUrl}/track/invoice`, { params });
 }
 }

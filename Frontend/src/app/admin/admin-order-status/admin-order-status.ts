@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DecimalPipe, DatePipe } from '@angular/common';
-import { OrderService, CustomerOrder, OrderStatus } from '../../services/order';
+import { OrderService, CustomerOrder, OrderInvoiceDto, OrderStatus } from '../../services/order';
 
 @Component({
   selector: 'app-admin-orders',
@@ -15,6 +15,12 @@ export class AdminOrders implements OnInit {
   loading = signal(true);
   errorMessage = signal('');
   updatingOrderId = signal<string | null>(null);
+
+  // Inline expanded-row state
+  expandedOrderId = signal<string | null>(null);
+  selectedOrder = signal<OrderInvoiceDto | null>(null);
+  loadingDetails = signal(false);
+  detailsError = signal('');
 
   statusOptions: OrderStatus[] = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
@@ -37,7 +43,33 @@ export class AdminOrders implements OnInit {
       },
     });
   }
- 
+
+  toggleDetails(order: CustomerOrder) {
+    // Clicking the same row again collapses it
+    if (this.expandedOrderId() === order.id) {
+      this.expandedOrderId.set(null);
+      this.selectedOrder.set(null);
+      return;
+    }
+
+    this.expandedOrderId.set(order.id);
+    this.selectedOrder.set(null);
+    this.detailsError.set('');
+    this.loadingDetails.set(true);
+
+    this.orderService.getInvoiceByOrderNumberAndEmail(order.orderNumber, order.email).subscribe({
+      next: (invoice) => {
+        this.loadingDetails.set(false);
+        this.selectedOrder.set(invoice);
+      },
+      error: (err) => {
+        this.loadingDetails.set(false);
+        this.detailsError.set('Could not load order details.');
+        console.error(err);
+      },
+    });
+  }
+
   onStatusChange(order: CustomerOrder, event: Event) {
     const newStatus = (event.target as HTMLSelectElement).value as OrderStatus;
     if (newStatus === order.orderStatus) return;

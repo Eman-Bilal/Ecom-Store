@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
-import { ProductService, Product } from '../../../services/product';
+import { ProductService, ProductResponse, getProductImageSrc } from '../../../services/product';
 import { CartService } from '../../../services/cart';
 
 @Component({
@@ -17,7 +17,7 @@ export class ProductDetail implements OnInit {
 
   productId = this.route.snapshot.params['id'];
 
-  product = signal<Product | null>(null);
+  product = signal<ProductResponse | null>(null);
   loading = signal(true);
   errorMessage = signal('');
   quantity = signal(1);
@@ -35,6 +35,10 @@ export class ProductDetail implements OnInit {
         console.error(err);
       },
     });
+  }
+
+  imageSrc(product: ProductResponse): string | null {
+    return getProductImageSrc(product);
   }
 
   increment() {

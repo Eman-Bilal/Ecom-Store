@@ -1,7 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DecimalPipe, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProductService, Product, ProductFormData } from '../../services/product';
+import {
+  ProductService,
+  Product,
+  ProductResponse,
+  ProductFormData,
+  ProductRequestDto,
+} from '../../services/product';
 import { CategoryService, Category } from '../../services/category';
 
 @Component({
@@ -15,14 +21,14 @@ export class AdminProducts implements OnInit {
   private categoryService = inject(CategoryService);
 
   // Render-critical state -> signals, so the view always updates reliably
-  products = signal<Product[]>([]);
+  products = signal<ProductResponse[]>([]);
   categories = signal<Category[]>([]);
   loading = signal(true);
   errorMessage = signal('');
   showForm = signal(false);
   submitting = signal(false);
   formError = signal('');
-  editingProduct = signal<Product | null>(null);
+  editingProduct = signal<ProductResponse | null>(null);
 
   // Plain fields for ngModel-bound inputs (typing works fine either way)
   searchName = '';
@@ -32,18 +38,18 @@ export class AdminProducts implements OnInit {
   formQuantityInStock: number | null = null;
   formCategoryId: number | null = null;
 
-   // Image upload state
+  // Image upload state
   selectedImageFile: File | null = null;
   imagePreviewUrl: string | null = null;
   imageError = signal('');
-  private readonly allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg']
- 
+  private readonly allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
   ngOnInit() {
     this.fetchProducts();
     this.fetchCategories();
   }
 
+  // GET /api/products
   fetchProducts() {
     this.loading.set(true);
     this.errorMessage.set('');
@@ -69,6 +75,7 @@ export class AdminProducts implements OnInit {
     });
   }
 
+  // GET /api/products/search
   onSearch() {
     if (!this.searchName.trim()) {
       this.fetchProducts();
@@ -103,19 +110,28 @@ export class AdminProducts implements OnInit {
   onImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
- 
+
     const file = input.files[0];
     this.imageError.set('');
- 
+
     if (!this.allowedImageTypes.includes(file.type)) {
       this.imageError.set('Only JPG, JPEG, and PNG image formats are allowed.');
       input.value = ''; // clear the invalid selection
       this.selectedImageFile = null;
       return;
     }
- 
+
     this.selectedImageFile = file;
     this.imagePreviewUrl = URL.createObjectURL(file);
+  }
+
+  // Converts the base64 "image" + "contentType" fields from ProductResponseDto
+  // into a displayable data URL for <img [src]>
+  getImageSrc(product: ProductResponse): string | null {
+    if (!product.image) return null;
+    if (product.image.startsWith('data:')) return product.image;
+    const mime = product.contentType || 'image/jpeg';
+    return `data:${mime};base64,${product.image}`;
   }
 
   openAddForm() {
@@ -126,24 +142,31 @@ export class AdminProducts implements OnInit {
     this.formQuantityInStock = null;
     const cats = this.categories();
     this.formCategoryId = cats.length ? cats[0].id : null;
-    this.showForm.set(true);
+    this.formError.set('');
     this.imageError.set('');
     this.selectedImageFile = null;
     this.imagePreviewUrl = null;
-    this.formError.set('');
+    this.showForm.set(true);
   }
 
-  openEditForm(product: Product) {
+  openEditForm(product: ProductResponse) {
     this.editingProduct.set(product);
     this.formName = product.name;
     this.formDescription = product.description;
     this.formPrice = product.price;
     this.formQuantityInStock = product.quantityInStock;
-    this.formCategoryId = product.category?.id ?? null;
+
+    // Backend only sends categoryName (no categoryId on ProductResponseDto),
+    // so we match it against the loaded categories list to pre-select the dropdown.
+    const matchedCategory = this.categories().find(
+      (c) => c.categoryName === product.categoryName
+    );
+    this.formCategoryId = matchedCategory ? matchedCategory.id : null;
+
     this.formError.set('');
-     this.imageError.set('');
+    this.imageError.set('');
     this.selectedImageFile = null;
-    this.imagePreviewUrl = product.imageUrl; // show existing image, if any
+    this.imagePreviewUrl = this.getImageSrc(product); // show existing image, if any
     this.showForm.set(true);
   }
 
@@ -162,33 +185,49 @@ export class AdminProducts implements OnInit {
 
     const currentlyEditing = this.editingProduct();
 
-    const payload: ProductFormData = {
-      name: this.formName,
-      description: this.formDescription,
-      price: this.formPrice,
-      quantityInStock: this.formQuantityInStock,
-      active: currentlyEditing ? currentlyEditing.active : true,
-    };
-
     if (currentlyEditing) {
+      // Editing an existing product
+      const payload: ProductFormData = {
+        name: this.formName,
+        description: this.formDescription,
+        price: this.formPrice,
+        quantityInStock: this.formQuantityInStock,
+        active: currentlyEditing.active ?? true,
+      };
+
       this.productService.updateProduct(currentlyEditing.id, this.formCategoryId, payload).subscribe({
-        next: (updated) => {
-          this.submitting.set(false);
-          this.showForm.set(false);
-          this.products.update((list) => list.map((p) => (p.id === updated.id ? updated : p)));
-        },
+        next: (updated) => this.afterEditSave(updated),
         error: (err) => {
           this.submitting.set(false);
           this.formError.set('Could not update product. Please check the fields.');
           console.error(err);
         },
       });
-    } else {
-      this.productService.createProduct(this.formCategoryId, payload).subscribe({
+      return;
+    }
+
+    // Creating a new product — image is required since we only use the
+    // combined create-with-image endpoint now.
+    if (!this.selectedImageFile) {
+      this.submitting.set(false);
+      this.imageError.set('Please select a product image.');
+      return;
+    }
+
+    const requestDto: ProductRequestDto = {
+      name: this.formName,
+      description: this.formDescription,
+      price: this.formPrice,
+      quantityInStock: this.formQuantityInStock,
+    };
+
+    this.productService
+      .createProductWithImage(this.formCategoryId, requestDto, this.selectedImageFile)
+      .subscribe({
         next: (created) => {
           this.submitting.set(false);
           this.showForm.set(false);
-          this.products.update((list) => [...list, created]);
+          this.fetchProducts(); // re-fetch so the new product's DTO fields (image/categoryName) are correct
         },
         error: (err) => {
           this.submitting.set(false);
@@ -196,42 +235,36 @@ export class AdminProducts implements OnInit {
           console.error(err);
         },
       });
-    }
   }
 
-    private afterSave(product: Product, isNew = false) {
+  // Runs after an existing product's regular fields have been updated.
+  // If the user picked a new image, replace it now via the image endpoint;
+  // otherwise we're already done.
+  private afterEditSave(product: Product) {
     if (!this.selectedImageFile) {
       this.submitting.set(false);
       this.showForm.set(false);
-      this.products.update((list) =>
-        isNew ? [...list, product] : list.map((p) => (p.id === product.id ? product : p))
-      );
+      this.fetchProducts();
       return;
     }
- 
-    this.productService.uploadImage(product.id, this.selectedImageFile).subscribe({
-      next: (withImage) => {
+
+    this.productService.updateProductImage(product.id, this.selectedImageFile).subscribe({
+      next: () => {
         this.submitting.set(false);
         this.showForm.set(false);
-        this.products.update((list) =>
-          isNew ? [...list, withImage] : list.map((p) => (p.id === withImage.id ? withImage : p))
-        );
+        this.fetchProducts();
       },
       error: (err) => {
         this.submitting.set(false);
-        // Product itself was saved successfully; only the image failed.
-        this.formError.set('Product saved, but the image could not be uploaded.');
+        this.formError.set('Product saved, but the image could not be updated.');
         console.error(err);
         this.showForm.set(false);
-        this.products.update((list) =>
-          isNew ? [...list, product] : list.map((p) => (p.id === product.id ? product : p))
-        );
+        this.fetchProducts();
       },
     });
   }
- 
 
-  toggleStatus(product: Product) {
+  toggleStatus(product: ProductResponse) {
     if (product.active) {
       this.productService.deleteProduct(product.id).subscribe({
         next: () => {
@@ -248,9 +281,10 @@ export class AdminProducts implements OnInit {
       });
     } else {
       this.productService.reactivateProduct(product.id).subscribe({
-        next: (updated) => {
-          // PATCH returns the full updated product, so we use it directly.
-          this.products.update((list) => list.map((p) => (p.id === updated.id ? updated : p)));
+        next: () => {
+          // Backend returns full Product entity here, not ProductResponseDto,
+          // so we just re-fetch to get the consistent DTO shape.
+          this.fetchProducts();
         },
         error: (err) => {
           console.error(err);

@@ -1,7 +1,3 @@
-<div class="shop-toolbar">
-  <div class="tabs"><a class="active">Newest Arrivals</a><a>Price high to low</a><a>Most popular</a></div>
-  <div class="per-page">{{ products().length }} results</div>
-</div>
 
 @if (loading()) {
   <p>Loading products...</p>
@@ -15,11 +11,14 @@
       <div class="product-card">
         <a [routerLink]="['/product', product.id]">
           <div class="product-photo">
-            <!-- TODO: swap for <img [src]="product.imageUrl"> once image serving is finalized -->
-            <div class="img-placeholder"></div>
+            @if (imageSrc(product); as src) {
+              <img [src]="src" alt="{{ product.name }}" class="product-img" />
+            } @else {
+              <div class="img-placeholder"></div>
+            }
           </div>
         </a>
-        <div class="cat">{{ product.category?.categoryName }}</div>
+        <div class="cat">{{ product.categoryName }}</div>
         <div class="name">{{ product.name }}</div>
         <div class="price">Rs. {{ product.price | number }}</div>
         <div class="add-line"><a [routerLink]="['/product', product.id]">View details</a></div>
@@ -28,4 +27,3 @@
   </div>
 }
 
-<div class="pagination"><a class="active">1</a><a>2</a><a>3</a><a>→</a></div>
